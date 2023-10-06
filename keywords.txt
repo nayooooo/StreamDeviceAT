@@ -1,0 +1,29 @@
+###########################################
+# Syntax Coloring Map For at library
+###########################################
+
+###########################################
+# Datatypes (KEYWORD1)
+###########################################
+
+At                      KEYWORD1
+At_Type                 KEYWORD1
+At_Type_t               KEYWORD1
+At_Err                  KEYWORD1
+At_Err_t                KEYWORD1
+At_Param                KEYWORD1
+At_Param_t              KEYWORD1
+At_State                KEYWORD1
+At_State_t              KEYWORD1
+
+###########################################
+# Methods and Functions (KEYWORD2)
+###########################################
+
+getParamMaxNum          KEYWORD2
+getStateTable           KEYWORD2
+errorToString           KEYWORD2
+
+handle                  KEYWORD2
+handleAuto              KEYWORD2
+sendInfor               KEYWORD2
