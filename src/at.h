@@ -15,6 +15,10 @@ class At
 {
 public:
 	At(
+		const At_State_t atTable, Stream* input_dev, Stream* output_dev,
+		size_t param_max_num = AT_PARAM_MAX_NUM, char terminator = '\n'
+	);
+	At(
 		const At_State_t atTable, Stream& input_dev, Stream& output_dev,
 		size_t param_max_num = AT_PARAM_MAX_NUM, char terminator = '\n'
 	);
@@ -26,6 +30,10 @@ private:
 public:
 	virtual size_t getParamMaxNum(void);
 	virtual At_State_t getStateTable(void);
+	virtual At_Err_t setInputDevice(Stream* input_dev);
+	virtual At_Err_t setInputDevice(Stream& input_dev);
+	virtual At_Err_t setOutputDevice(Stream* output_dev);
+	virtual At_Err_t setOutputDevice(Stream& output_dev);
 	virtual String errorToString(At_Err_t error);
 
 	virtual At_Err_t handle(const String& atLable);
@@ -33,7 +41,9 @@ public:
 	At_Err_t handleAuto(void);
 
 	virtual size_t print(const String& message);
+	virtual size_t print(const char* message);
 	virtual size_t println(const String& message);
+	virtual size_t println(const char* message);
 	virtual At_Err_t printSet(const String& name = "");
 	virtual At_Err_t printSet(const char* name = "");
 
@@ -42,8 +52,8 @@ public:
 
 private:
 	At_State_t _atTable;
-	Stream& _input_dev;
-	Stream& _output_dev;
+	Stream* _input_dev;
+	Stream* _output_dev;
 	size_t _param_max_num;
 	char _terminator;
 	String _readString;

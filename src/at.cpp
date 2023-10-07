@@ -1,12 +1,20 @@
 #include "at.h"
 
 At::At(
-		const At_State_t atTable, Stream& input_dev, Stream& output_dev,
+		const At_State_t atTable, Stream* input_dev, Stream* output_dev,
 		size_t param_max_num, char terminator
 	):
 	_atTable(atTable), _input_dev(input_dev), _output_dev(output_dev), _param_max_num(param_max_num), _terminator(terminator)
 {
 	this->_readString = "";
+}
+
+At::At(
+		const At_State_t atTable, Stream& input_dev, Stream& output_dev,
+		size_t param_max_num, char terminator
+	):
+	At(atTable, &input_dev, &output_dev, param_max_num, terminator)
+{
 }
 
 At_Err_t At::cutString(struct At_Param& param, const String& atLable)
@@ -62,6 +70,28 @@ At_State_t At::getStateTable(void)
 	return _atTable;
 }
 
+At_Err_t At::setInputDevice(Stream* input_dev)
+{
+	this->_input_dev = input_dev;
+	return AT_EOK;
+}
+
+At_Err_t At::setInputDevice(Stream& input_dev)
+{
+	return setInputDevice(&input_dev);
+}
+
+At_Err_t At::setOutputDevice(Stream* output_dev)
+{
+	this->_output_dev = output_dev;
+	return AT_EOK;
+}
+
+At_Err_t At::setOutputDevice(Stream& output_dev)
+{
+	return setOutputDevice(&output_dev);
+}
+
 String At::errorToString(At_Err_t error)
 {
 	switch (error)
@@ -108,8 +138,8 @@ At_Err_t At::handleAuto(void)
 {
 	int in = 0;
 
-	if (this->_input_dev.available()) {
-		in = this->_input_dev.read();
+	if (this->_input_dev->available()) {
+		in = this->_input_dev->read();
 		if ((in >= 0) && ((char)in != this->_terminator)) {
 			this->_readString += (char)in;
 			return AT_EOK;
@@ -125,28 +155,38 @@ At_Err_t At::handleAuto(void)
 
 size_t At::print(const String& message)
 {
-	return this->_output_dev.print(message);
+	return this->_output_dev->print(message);
+}
+
+size_t At::print(const char* message)
+{
+	return print(String(message));
 }
 
 size_t At::println(const String& message)
 {
-	return this->_output_dev.println(message);
+	return this->_output_dev->println(message);
+}
+
+size_t At::println(const char* message)
+{
+	return println(String(message));
 }
 
 At_Err_t At::printSet(const String& name)
 {
-	this->_output_dev.println();
+	this->_output_dev->println();
 	if (name != "") {
-		this->_output_dev.println(String("the set(") + name + "): ");
+		this->_output_dev->println(String("the set(") + name + "): ");
 	} else {
-		this->_output_dev.println("the set: ");;
+		this->_output_dev->println("the set: ");;
 	}
 	if (this->_atTable[0].atLable == AT_LABLE_TAIL) {
-		this->_output_dev.println("have nothing AT commond!");
+		this->_output_dev->println("have nothing AT commond!");
 	} else {
 		for (size_t i = 0; this->_atTable[i].atLable != AT_LABLE_TAIL; i++) {
 			String lable = this->_atTable[i].atLable;
-			this->_output_dev.println(String("--") + lable);
+			this->_output_dev->println(String("--") + lable);
 		}
 	}
 	return AT_EOK;
@@ -164,6 +204,6 @@ At_Err_t At::sendInfor(const String& infor)
 
 At_Err_t At::sendInfor(const char* infor)
 {
-	this->_output_dev.print(String("AT+{") + infor + "}");
+	this->_output_dev->print(String("AT+{") + infor + "}");
 	return AT_EOK;
 }
