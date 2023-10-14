@@ -1,22 +1,5 @@
 #include "at.h"
 
-At::At(
-		const At_State_t atTable, Stream* input_dev, Stream* output_dev,
-		size_t param_max_num, char terminator
-	):
-	_atTable(atTable), _input_dev(input_dev), _output_dev(output_dev), _param_max_num(param_max_num), _terminator(terminator)
-{
-	this->_readString = "";
-}
-
-At::At(
-		const At_State_t atTable, Stream& input_dev, Stream& output_dev,
-		size_t param_max_num, char terminator
-	):
-	At(atTable, &input_dev, &output_dev, param_max_num, terminator)
-{
-}
-
 At_Err_t At::cutString(struct At_Param& param, const String& atLable)
 {
 	char* str = (char*)(atLable.c_str());
@@ -60,38 +43,6 @@ At_State_t At::checkString(struct At_Param& param, const At_State_t atTable, con
 	return target;
 }
 
-size_t At::getParamMaxNum(void)
-{
-	return _param_max_num;
-}
-
-At_State_t At::getStateTable(void)
-{
-	return _atTable;
-}
-
-At_Err_t At::setInputDevice(Stream* input_dev)
-{
-	this->_input_dev = input_dev;
-	return AT_EOK;
-}
-
-At_Err_t At::setInputDevice(Stream& input_dev)
-{
-	return setInputDevice(&input_dev);
-}
-
-At_Err_t At::setOutputDevice(Stream* output_dev)
-{
-	this->_output_dev = output_dev;
-	return AT_EOK;
-}
-
-At_Err_t At::setOutputDevice(Stream& output_dev)
-{
-	return setOutputDevice(&output_dev);
-}
-
 String At::errorToString(At_Err_t error)
 {
 	switch (error)
@@ -129,11 +80,6 @@ At_Err_t At::handle(const String& atLable)
 	return AT_EOK;
 }
 
-At_Err_t At::handle(const char* atLable)
-{
-	return handle(String(atLable));
-}
-
 At_Err_t At::handleAuto(void)
 {
 	int in = 0;
@@ -153,26 +99,6 @@ At_Err_t At::handleAuto(void)
 	return AT_ERROR_INPUT;
 }
 
-size_t At::print(const String& message)
-{
-	return this->_output_dev->print(message);
-}
-
-size_t At::print(const char* message)
-{
-	return print(String(message));
-}
-
-size_t At::println(const String& message)
-{
-	return this->_output_dev->println(message);
-}
-
-size_t At::println(const char* message)
-{
-	return println(String(message));
-}
-
 At_Err_t At::printSet(const String& name)
 {
 	this->_output_dev->println();
@@ -189,21 +115,5 @@ At_Err_t At::printSet(const String& name)
 			this->_output_dev->println(String("--") + lable);
 		}
 	}
-	return AT_EOK;
-}
-
-At_Err_t At::printSet(const char* name)
-{
-	return printSet(String(name));
-}
-
-At_Err_t At::sendInfor(const String& infor)
-{
-	return sendInfor(infor.c_str());
-}
-
-At_Err_t At::sendInfor(const char* infor)
-{
-	this->_output_dev->print(String("AT+{") + infor + "}");
 	return AT_EOK;
 }
