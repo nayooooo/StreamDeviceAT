@@ -99,6 +99,30 @@ At_Err_t At::handleAuto(void)
 	return AT_ERROR_INPUT;
 }
 
+size_t At::printf(const char* format, ...)
+{
+	va_list arg;
+	va_start(arg, format);
+	char temp[64] = { 0 };
+	char *buffer = temp;
+	size_t len = vsnprintf(temp, sizeof(temp), format, arg);
+	va_end(arg);
+	if (len > sizeof(temp) - 1) {
+		buffer = new(std::nothrow) char[len + 1];
+		if (!buffer) return 0;
+		memset(buffer, 0, len + 1);
+		va_start(arg, format);
+        vsnprintf(buffer, len + 1, format, arg);
+        va_end(arg);
+	}
+	print(buffer);
+    if (buffer != temp) {
+        delete[] buffer;
+    }
+
+	return len;
+}
+
 At_Err_t At::printSet(const String& name)
 {
 	this->_output_dev->println();

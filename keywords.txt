@@ -29,6 +29,7 @@ errorToString           KEYWORD2
 handle                  KEYWORD2
 handleAuto              KEYWORD2
 
+printf                   KEYWORD2
 print                   KEYWORD2
 println                 KEYWORD2
 printSet                KEYWORD2

@@ -52,6 +52,8 @@ public:
 	virtual At_Err_t handle(const char* atLable) { return handle(String(atLable)); }
 	At_Err_t handleAuto(void);
 
+	virtual size_t printf(const char* format, ...)  __attribute__ ((format (printf, 2, 3)));
+
 	virtual size_t print(const String& message)
 	{ return this->_output_dev->print(message); }
 	virtual size_t print(const char* message) { return print(String(message)); }
