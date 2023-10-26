@@ -33,7 +33,7 @@ public:
 
 private:
 	At_Err_t cutString(struct At_Param& param, const String& atLable);
-	At_State_t checkString(struct At_Param& param, const At_State_t atTable, const String& atLable);
+	At_State_t checkString(struct At_Param& param, const String& atLable);
 
 public:
 	virtual size_t getParamMaxNum(void) { return this->_param_max_num; }

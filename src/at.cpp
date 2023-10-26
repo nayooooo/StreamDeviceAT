@@ -23,18 +23,18 @@ At_Err_t At::cutString(struct At_Param& param, const String& atLable)
 	return AT_EOK;
 }
 
-At_State_t At::checkString(struct At_Param& param, const At_State_t atTable, const String& atLable)
+At_State_t At::checkString(struct At_Param& param, const String& atLable)
 {
 	uint32_t i = 0;
 	At_State_t target = nullptr;
 
 	this->cutString(param, atLable);
 
-	while (atTable[i].atLable != AT_LABLE_TAIL)
+	while (this->_atTable[i].atLable != AT_LABLE_TAIL)
 	{
-		if (atTable[i].atLable == param.cmd)
+		if (this->_atTable[i].atLable == param.cmd)
 		{
-			target = &atTable[i];
+			target = &this->_atTable[i];
 			break;
 		}
 		i++;
@@ -66,7 +66,7 @@ String At::errorToString(At_Err_t error)
 At_Err_t At::handle(const String& atLable)
 {
 	struct At_Param param;
-	At_State_t target = this->checkString(param, _atTable, atLable);
+	At_State_t target = this->checkString(param, atLable);
 
 	if (target == NULL)
 		return AT_ERROR_NOT_FIND;
