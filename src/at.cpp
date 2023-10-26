@@ -6,13 +6,13 @@ At_Err_t At::cutString(struct At_Param& param, const String& atLable)
 
 	param.cmd = AT_LABLE_TAIL;
 	param.argc = 0;
-	for (int i = 0; i < getParamMaxNum(); i++)
+	for (int i = 0; i < this->getParamMaxNum(); i++)
 		param.argv[i] = (char *)"";
 
 	// find at lable
 	param.cmd = strtok(str, " \r\n");
 	// find at param
-	for (int i = 0; i < getParamMaxNum(); i++)
+	for (int i = 0; i < this->getParamMaxNum(); i++)
 	{
 		param.argv[i] = strtok(NULL, " \r\n");
 		if (param.argv[i] == NULL)
@@ -28,7 +28,7 @@ At_State_t At::checkString(struct At_Param& param, const At_State_t atTable, con
 	uint32_t i = 0;
 	At_State_t target = nullptr;
 
-	cutString(param, atLable);
+	this->cutString(param, atLable);
 
 	while (atTable[i].atLable != AT_LABLE_TAIL)
 	{
@@ -66,7 +66,7 @@ String At::errorToString(At_Err_t error)
 At_Err_t At::handle(const String& atLable)
 {
 	struct At_Param param;
-	At_State_t target = checkString(param, _atTable, atLable);
+	At_State_t target = this->checkString(param, _atTable, atLable);
 
 	if (target == NULL)
 		return AT_ERROR_NOT_FIND;
@@ -90,7 +90,7 @@ At_Err_t At::handleAuto(void)
 			this->_readString += (char)in;
 			return AT_EOK;
 		} else if ((char)in == this->_terminator) {
-			At_Err_t err = handle(this->_readString);
+			At_Err_t err = this->handle(this->_readString);
 			this->_readString = "";
 			return err;
 		}
@@ -115,7 +115,7 @@ size_t At::printf(const char* format, ...)
         vsnprintf(buffer, len + 1, format, arg);
         va_end(arg);
 	}
-	print(buffer);
+	this->print(buffer);
     if (buffer != temp) {
         delete[] buffer;
     }
@@ -125,18 +125,18 @@ size_t At::printf(const char* format, ...)
 
 At_Err_t At::printSet(const String& name)
 {
-	this->_output_dev->println();
+	this->println();
 	if (name != "") {
-		this->_output_dev->println(String("the set(") + name + "): ");
+		this->println(String("the set(") + name + "): ");
 	} else {
-		this->_output_dev->println("the set: ");;
+		this->println("the set: ");;
 	}
 	if (this->_atTable[0].atLable == AT_LABLE_TAIL) {
-		this->_output_dev->println("have nothing AT commond!");
+		this->println("have nothing AT commond!");
 	} else {
 		for (size_t i = 0; this->_atTable[i].atLable != AT_LABLE_TAIL; i++) {
 			String lable = this->_atTable[i].atLable;
-			this->_output_dev->println(String("--") + lable);
+			this->println(String("--") + lable);
 		}
 	}
 	return AT_EOK;

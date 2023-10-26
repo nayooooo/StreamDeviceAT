@@ -36,8 +36,8 @@ private:
 	At_State_t checkString(struct At_Param& param, const At_State_t atTable, const String& atLable);
 
 public:
-	virtual size_t getParamMaxNum(void) { return _param_max_num; }
-	virtual At_State_t getStateTable(void) { return _atTable; }
+	virtual size_t getParamMaxNum(void) { return this->_param_max_num; }
+	virtual At_State_t getStateTable(void) { return this->_atTable; }
 
 	virtual At_Err_t setInputDevice(Stream* input_dev)
 	{ this->_input_dev = input_dev; return AT_EOK; }
@@ -59,8 +59,8 @@ public:
 	virtual size_t print(const char* message) { return print(String(message)); }
 
 	virtual size_t println(const String& message)
-	{ return this->_output_dev->println(message); }
-	virtual size_t println(const char* message) { return println(String(message)); }
+	{ return this->print(message + "\r\n"); }
+	virtual size_t println(const char* message = "") { return println(String(message)); }
 
 	virtual At_Err_t printSet(const String& name = "");
 	virtual At_Err_t printSet(const char* name = "") { return printSet(String(name)); }
