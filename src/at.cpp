@@ -7,7 +7,7 @@ At_Err_t At::cutString(struct At_Param& param, const String& atLable)
 	param.cmd = AT_LABLE_TAIL;
 	param.argc = 0;
 	for (int i = 0; i < this->getParamMaxNum(); i++)
-		param.argv[i] = (char *)"";
+		param.argv[i].clear();
 
 	// find at lable
 	param.cmd = strtok(str, " \r\n");
@@ -84,6 +84,8 @@ At_Err_t At::handleAuto(void)
 {
 	int in = 0;
 
+	if (!isInputDevExists()) return AT_ERROR_INPUT;
+
 	if (this->_input_dev->available()) {
 		in = this->_input_dev->read();
 		if ((in >= 0) && ((char)in != this->_terminator)) {
@@ -91,7 +93,7 @@ At_Err_t At::handleAuto(void)
 			return AT_EOK;
 		} else if ((char)in == this->_terminator) {
 			At_Err_t err = this->handle(this->_readString);
-			this->_readString = "";
+			this->_readString.clear();
 			return err;
 		}
 	}

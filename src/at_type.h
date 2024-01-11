@@ -29,7 +29,7 @@ struct At_Param
 {
 	String cmd;
 	int argc;
-	char *argv[AT_PARAM_MAX_NUM];
+	String argv[AT_PARAM_MAX_NUM];
 };
 typedef struct At_Param* At_Param_t;
 

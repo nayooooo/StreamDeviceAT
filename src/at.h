@@ -7,8 +7,8 @@
 #ifndef __AT_H__
 #define __AT_H__
 
-#include <stdlib.h>
 #include <at_type.h>
+#include <stdlib.h>
 
 class At
 {
@@ -31,6 +31,9 @@ public:
 	}
 
 private:
+	bool isInputDevExists(void) { return (this->_input_dev != nullptr) ? true: false; }
+	bool isOutputDevExists(void) { return (this->_output_dev != nullptr) ? true: false; }
+
 	At_Err_t cutString(struct At_Param& param, const String& atLable);
 	At_State_t checkString(struct At_Param& param, const String& atLable);
 
@@ -38,11 +41,9 @@ public:
 	virtual size_t getParamMaxNum(void) { return this->_param_max_num; }
 	virtual At_State_t getStateTable(void) { return this->_atTable; }
 
-	virtual At_Err_t setInputDevice(Stream* input_dev)
-	{ this->_input_dev = input_dev; return AT_EOK; }
+	virtual At_Err_t setInputDevice(Stream* input_dev) { this->_input_dev = input_dev; return AT_EOK; }
 	virtual At_Err_t setInputDevice(Stream& input_dev) { return setInputDevice(&input_dev); }
-	virtual At_Err_t setOutputDevice(Stream* output_dev)
-	{ this->_output_dev = output_dev; return AT_EOK; }
+	virtual At_Err_t setOutputDevice(Stream* output_dev) { this->_output_dev = output_dev; return AT_EOK; }
 	virtual At_Err_t setOutputDevice(Stream& output_dev) { return setOutputDevice(&output_dev); }
 
 	virtual String errorToString(At_Err_t error);
@@ -54,7 +55,7 @@ public:
 	virtual size_t printf(const char* format, ...)  __attribute__ ((format (printf, 2, 3)));
 
 	virtual size_t print(const String& message)
-	{ return this->_output_dev->print(message); }
+	{ return (isOutputDevExists()) ? (this->_output_dev->print(message)) : (0); }
 	virtual size_t print(const char* message) { return print(String(message)); }
 
 	virtual size_t println(const String& message)
