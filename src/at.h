@@ -7,7 +7,6 @@
 #ifndef __AT_H__
 #define __AT_H__
 
-#include <Arduino.h>
 #include <stdlib.h>
 #include <at_type.h>
 
