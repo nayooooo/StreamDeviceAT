@@ -24,7 +24,7 @@ getParamMaxNum          KEYWORD2
 getStateTable           KEYWORD2
 setInputDevice          KEYWORD2
 setOutputDevice         KEYWORD2
-errorToString           KEYWORD2
+errorToString           
 
 handle                  KEYWORD2
 handleAuto              KEYWORD2
