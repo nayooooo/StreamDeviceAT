@@ -47,7 +47,7 @@ The following is a simple example code that demonstrates how to use the library:
 
 
     #include <Arduino.h>
-    #include <at.h>
+    #include <StreamDeviceAT.h>
 
     // Defining AT Instruction Processing Functions
     At_Err_t handleCmd1(At_Param_t param)

@@ -47,7 +47,7 @@
 
 
     #include <Arduino.h>
-    #include <at.h>
+    #include <StreamDeviceAT.h>
 
     // 定义AT指令处理函数
     At_Err_t handleCmd1(At_Param_t param)

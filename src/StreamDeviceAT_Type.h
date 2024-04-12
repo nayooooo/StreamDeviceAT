@@ -1,5 +1,5 @@
-#ifndef __AT_TYPE_H__
-#define __AT_TYPE_H__
+#ifndef __STREAMDEVICEAT_TYPE_H__
+#define __STREAMDEVICEAT_TYPE_H__
 
 #include <Arduino.h>
 
@@ -42,4 +42,4 @@ struct At_State
 };
 typedef struct At_State* At_State_t;
 
-#endif  // !__AT_TYPE_H__
+#endif  // !__STREAMDEVICEAT_TYPE_H__

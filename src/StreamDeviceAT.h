@@ -4,10 +4,10 @@
  *              [0] SSID    [1] PSK
  */
 
-#ifndef __AT_H__
-#define __AT_H__
+#ifndef __STREAMDEVICEAT_H__
+#define __STREAMDEVICEAT_H__
 
-#include <at_type.h>
+#include <StreamDeviceAT_Type.h>
 #include <stdlib.h>
 
 class At
@@ -78,4 +78,4 @@ private:
 	String _readString;
 };
 
-#endif /* __AT_H__ */
+#endif /* __STREAMDEVICEAT_H__ */

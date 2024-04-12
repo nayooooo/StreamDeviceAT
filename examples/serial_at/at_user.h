@@ -2,7 +2,7 @@
 #define __AT_USER_H__
 
 #include <Arduino.h>
-#include <at.h>
+#include <StreamDeviceAT.h>
 
 #define AT_USER_OK "OK"
 #define AT_USER_ERROR_ARGC "error by argc"
