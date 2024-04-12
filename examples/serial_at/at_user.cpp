@@ -34,7 +34,7 @@ At_Err_t at_user_AT_List(At_Param_t param)
     return AT_EOK;
 }
 
-#include <EspSaveCrash.h>  // 重启
+#include <EspSaveCrash.h>  // reboot
 At_Err_t at_user_AT_Reboot(At_Param_t param)
 {
     at.sendInfor(AT_USER_OK);
@@ -42,7 +42,7 @@ At_Err_t at_user_AT_Reboot(At_Param_t param)
     return AT_EOK;
 }
 
-// 建立AT指令集下的LED子指令集
+// Establish LED sub instruction set under AT instruction set
 #define _AT_USER_LED_ON      LOW
 #define _AT_USER_LED_OFF     HIGH
 At_Err_t _at_user_led_on(At_Param_t param);

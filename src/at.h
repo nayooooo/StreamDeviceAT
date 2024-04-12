@@ -1,6 +1,6 @@
 /**
- * @details 该AT模块得到的参数列表是处理AT指令码外的参数，
- *          如：AT+WIFI SSID PSK得到的参数列表是
+ * @details The parameter list obtained by this AT module is for processing parameters outside of the AT instruction code
+ *          For example, the parameter list obtained from AT+WIFI SSID PSK is: 
  *              [0] SSID    [1] PSK
  */
 
