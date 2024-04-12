@@ -2,7 +2,7 @@
 
 English/[中文](README.md)
 
-This library implements an AT instruction parser that can parse AT instructions sent by serial input devices and send some information out through serial output devices.
+This library implements an AT instruction parser that can parse AT instructions sent by serial input devices and send some information out through serial output devices, which can be easily applied to debugging, instruction control, and other related tasks.
 
 # usage
 
