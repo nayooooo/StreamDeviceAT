@@ -1,6 +1,7 @@
 /**
  * @details In this example, you need to install the EspSaveCrash library or block the restart command
  * @module Generic ESP8266 Module
+ *         Actually is ESP-01S
 */
 
 #include <Arduino.h>
