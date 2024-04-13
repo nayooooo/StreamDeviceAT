@@ -4,22 +4,22 @@
             "name": "windows-gcc-x64",
             "includePath": [
                 "${workspaceFolder}/**",
-                "C:/Users/YEWAN/AppData/Local/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/cores/esp8266/**",
-                "C:/Users/YEWAN/AppData/Local/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/tools/sdk/include/**",
-                "C:/Users/YEWAN/AppData/Local/Arduino15/packages/esp8266/tools/xtensa-lx106-elf-gcc/3.1.0-gcc10.3-e5f9fec/xtensa-lx106-elf/include/**"
+                "${env:MyUser_Path}/AppData/Local/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/cores/esp8266/**",
+                "${env:MyUser_Path}/AppData/Local/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/tools/sdk/include/**",
+                "${env:MyUser_Path}/AppData/Local/Arduino15/packages/esp8266/tools/xtensa-lx106-elf-gcc/3.1.0-gcc10.3-e5f9fec/xtensa-lx106-elf/include/**"
             ],
             "browse": {
                 "path": [
                     "${workspaceFolder}",
-                    "C:/Users/YEWAN/AppData/Local/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/cores/esp8266",
-                    "C:/Users/YEWAN/AppData/Local/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/tools/sdk",
-                    "C:/Users/YEWAN/AppData/Local/Arduino15/packages/esp8266/tools/xtensa-lx106-elf-gcc/3.1.0-gcc10.3-e5f9fec/xtensa-lx106-elf"
+                    "${env:MyUser_Path}/AppData/Local/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/cores/esp8266",
+                    "${env:MyUser_Path}/AppData/Local/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/tools/sdk",
+                    "${env:MyUser_Path}/AppData/Local/Arduino15/packages/esp8266/tools/xtensa-lx106-elf-gcc/3.1.0-gcc10.3-e5f9fec/xtensa-lx106-elf"
                 ],
                 "limitSymbolsToIncludedHeaders": false
             },
             "cStandard": "${default}",
             "cppStandard": "${default}",
-            "compilerPath": "C:/Users/YEWAN/mingw64/bin/gcc.exe",
+            "compilerPath": "${env:MinGW_Path}/bin/gcc.exe",
             "intelliSenseMode": "windows-gcc-x64"
         }
     ],
