@@ -1,21 +1,26 @@
 #include "StreamDeviceAT.h"
 
-At_Err_t At::cutString(struct At_Param& param, const String& atLable)
+At_Err_t At::cutString(struct At_Param& param, const String& atLable) const
 {
+	if (atLable.isEmpty()) return AT_ERROR;  // do not accept empty string
 	char* str = (char*)(atLable.c_str());
+
+	size_t param_num = this->getParamMaxNum();
+	if (this->arraySize(param.argv) < param_num) param_num = this->arraySize(param.argv);
 
 	param.cmd = AT_LABLE_TAIL;
 	param.argc = 0;
-	for (int i = 0; i < this->getParamMaxNum(); i++)
+	for (int i = 0; i < param_num; i++)
 		param.argv[i].clear();
 
-	// find at lable
+	// find at set
 	param.cmd = strtok(str, " \r\n");
+	if (param.cmd.isEmpty()) return AT_ERROR;
 	// find at param
-	for (int i = 0; i < this->getParamMaxNum(); i++)
+	for (int i = 0; i < param_num; i++)
 	{
 		param.argv[i] = strtok(NULL, " \r\n");
-		if (param.argv[i] == NULL)
+		if (param.argv[i].isEmpty())
 			break;
 		param.argc++;
 	}
@@ -23,18 +28,19 @@ At_Err_t At::cutString(struct At_Param& param, const String& atLable)
 	return AT_EOK;
 }
 
-At_State_t At::checkString(struct At_Param& param, const String& atLable)
+At_Ins_t At::checkString(struct At_Param& param, const String& atLable) const
 {
 	uint32_t i = 0;
-	At_State_t target = nullptr;
+	At_Ins_t target = nullptr;
 
-	this->cutString(param, atLable);
+	At_Err_t err = this->cutString(param, atLable);
+	if (err != AT_EOK) return nullptr;
 
-	while (this->_atTable[i].atLable != AT_LABLE_TAIL)
+	while (this->_atInsSet[i].atLable != AT_LABLE_TAIL)
 	{
-		if (this->_atTable[i].atLable == param.cmd)
+		if (this->_atInsSet[i].atLable == param.cmd)
 		{
-			target = &this->_atTable[i];
+			target = &this->_atInsSet[i];
 			break;
 		}
 		i++;
@@ -43,7 +49,7 @@ At_State_t At::checkString(struct At_Param& param, const String& atLable)
 	return target;
 }
 
-String At::errorToString(At_Err_t error)
+String At::error2String(At_Err_t error) const
 {
 	switch (error)
 	{
@@ -63,21 +69,19 @@ String At::errorToString(At_Err_t error)
 	return String("AT no error");
 }
 
-At_Err_t At::handle(const String& atLable)
+At_Err_t At::handle(const String& atLable) const
 {
 	struct At_Param param;
-	At_State_t target = this->checkString(param, atLable);
+	At_Ins_t target = this->checkString(param, atLable);
 
-	if (target == NULL)
+	if (target == nullptr)
 		return AT_ERROR_NOT_FIND;
-	if (target->act == NULL)
+	if (target->act == nullptr)
 		return AT_ERROR_NO_ACT;
 
 	At_Err_t ret = target->act(&param);
-	if (ret != AT_EOK)
-		return AT_ERROR;
 
-	return AT_EOK;
+	return ret;
 }
 
 At_Err_t At::handleAuto(void)
@@ -98,10 +102,10 @@ At_Err_t At::handleAuto(void)
 		}
 	}
 
-	return AT_ERROR_INPUT;
+	return AT_EOK;
 }
 
-size_t At::printf(const char* format, ...)
+size_t At::printf(const char* format, ...) const
 {
 	va_list arg;
 	va_start(arg, format);
@@ -125,19 +129,15 @@ size_t At::printf(const char* format, ...)
 	return len;
 }
 
-At_Err_t At::printSet(const String& name)
+At_Err_t At::printSet(const String& name) const
 {
 	this->println();
-	if (name != "") {
-		this->println(String("the set(") + name + "): ");
-	} else {
-		this->println("the set: ");;
-	}
-	if (this->_atTable[0].atLable == AT_LABLE_TAIL) {
+	this->println(String("the set(") + name + "): ");
+	if (this->_atInsSet[0].atLable == AT_LABLE_TAIL) {
 		this->println("have nothing AT commond!");
 	} else {
-		for (size_t i = 0; this->_atTable[i].atLable != AT_LABLE_TAIL; i++) {
-			String lable = this->_atTable[i].atLable;
+		for (size_t i = 0; this->_atInsSet[i].atLable != AT_LABLE_TAIL; i++) {
+			String lable = this->_atInsSet[i].atLable;
 			this->println(String("--") + lable);
 		}
 	}

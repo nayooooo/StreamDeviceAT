@@ -24,22 +24,24 @@ enum At_Err
 typedef enum At_Err At_Err_t;
 
 #define AT_LABLE_TAIL ""
-#define AT_PARAM_MAX_NUM (3)
+#define AT_PARAM_MAX_NUM_DEFAULT (3)
+#define AT_TERMINATOR_DEFAULT '\n'
 struct At_Param
 {
 	String cmd;
 	int argc;
-	String argv[AT_PARAM_MAX_NUM];
+	String argv[AT_PARAM_MAX_NUM_DEFAULT];
 };
 typedef struct At_Param* At_Param_t;
 
+// AT instruction
 typedef At_Err_t (*At_Act_t)(At_Param_t param);
-struct At_State
+struct At_Ins
 {
 	String atLable;
 	At_Type_t type;
 	At_Act_t act;
 };
-typedef struct At_State* At_State_t;
+typedef struct At_Ins* At_Ins_t;
 
 #endif  // !__STREAMDEVICEAT_TYPE_H__

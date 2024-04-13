@@ -6,7 +6,7 @@ At_Err_t at_user_AT_List(At_Param_t param);
 At_Err_t at_user_AT_Reboot(At_Param_t param);
 At_Err_t at_user_led(At_Param_t param);
 
-struct At_State atTable[] = {
+struct At_Ins atSet[] = {
     { "AT", AT_TYPE_CMD, at_user_AT },
     { "AT+LS", AT_TYPE_CMD, at_user_AT_List },
     { "AT+REBOOT", AT_TYPE_CMD, at_user_AT_Reboot },
@@ -14,7 +14,7 @@ struct At_State atTable[] = {
     { AT_LABLE_TAIL, AT_TYPE_NULL, at_user_AT_NULL },
 };
 
-At at(atTable, Serial, Serial);
+At at(atSet, Serial, Serial);
 
 At_Err_t at_user_AT_NULL(At_Param_t param)
 {
@@ -47,12 +47,12 @@ At_Err_t at_user_AT_Reboot(At_Param_t param)
 #define _AT_USER_LED_OFF     HIGH
 At_Err_t _at_user_led_on(At_Param_t param);
 At_Err_t _at_user_led_off(At_Param_t param);
-struct At_State atLEDTable[] = {
+struct At_Ins atLEDSet[] = {
     { "on", AT_TYPE_CMD, _at_user_led_on },
     { "off", AT_TYPE_CMD, _at_user_led_off },
     { AT_LABLE_TAIL, AT_TYPE_NULL, at_user_AT_NULL },
 };
-static At _at_led(atLEDTable, Serial, Serial);
+static At _at_led(atLEDSet, Serial, Serial);
 
 At_Err_t at_user_led(At_Param_t param)
 {

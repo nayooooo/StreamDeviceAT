@@ -14,63 +14,78 @@ class At
 {
 public:
 	At(
-		const At_State_t atTable, Stream* input_dev, Stream* output_dev,
-		size_t param_max_num = AT_PARAM_MAX_NUM, char terminator = '\n'
+		const At_Ins_t atTable, Stream* input_dev, Stream* output_dev,
+		size_t param_max_num = AT_PARAM_MAX_NUM_DEFAULT, char terminator = AT_TERMINATOR_DEFAULT
 	):
-	_atTable(atTable), _input_dev(input_dev), _output_dev(output_dev), _param_max_num(param_max_num), _terminator(terminator)
+	_atInsSet(atTable), _input_dev(input_dev), _output_dev(output_dev), _param_max_num(param_max_num), _terminator(terminator),
+	_readString("")
 	{
-		this->_readString = "";
 	}
 
 	At(
-		const At_State_t atTable, Stream& input_dev, Stream& output_dev,
-		size_t param_max_num = AT_PARAM_MAX_NUM, char terminator = '\n'
-	):
-	At(atTable, &input_dev, &output_dev, param_max_num, terminator)
+		const At_Ins_t atTable, Stream* input_dev, Stream& output_dev,
+		size_t param_max_num = AT_PARAM_MAX_NUM_DEFAULT, char terminator = AT_TERMINATOR_DEFAULT
+	): At(atTable, input_dev, &output_dev, param_max_num, terminator) {}
+
+	At(
+		const At_Ins_t atTable, Stream& input_dev, Stream* output_dev,
+		size_t param_max_num = AT_PARAM_MAX_NUM_DEFAULT, char terminator = AT_TERMINATOR_DEFAULT
+	): At(atTable, &input_dev, output_dev, param_max_num, terminator) {}
+
+	At(
+		const At_Ins_t atTable, Stream& input_dev, Stream& output_dev,
+		size_t param_max_num = AT_PARAM_MAX_NUM_DEFAULT, char terminator = AT_TERMINATOR_DEFAULT
+	): At(atTable, &input_dev, &output_dev, param_max_num, terminator) {}
+
+private:
+	template <typename T, size_t N>
+	constexpr size_t arraySize(T (&)[N]) const
 	{
+		return N;
 	}
 
-private:
-	bool isInputDevExists(void) { return (this->_input_dev != nullptr) ? true: false; }
-	bool isOutputDevExists(void) { return (this->_output_dev != nullptr) ? true: false; }
+	bool isInputDevExists(void) const { return (this->_input_dev != nullptr) ? true: false; }
+	bool isOutputDevExists(void) const { return (this->_output_dev != nullptr) ? true: false; }
 
-	At_Err_t cutString(struct At_Param& param, const String& atLable);
-	At_State_t checkString(struct At_Param& param, const String& atLable);
+	At_Err_t cutString(struct At_Param& param, const String& atLable) const;
+	At_Ins_t checkString(struct At_Param& param, const String& atLable) const;
 
 public:
-	virtual size_t getParamMaxNum(void) { return this->_param_max_num; }
-	virtual At_State_t getStateTable(void) { return this->_atTable; }
+	size_t getParamMaxNum(void) const { return this->_param_max_num; }
+	At_Ins_t getInsSet(void) const { return this->_atInsSet; }
 
-	virtual At_Err_t setInputDevice(Stream* input_dev) { this->_input_dev = input_dev; return AT_EOK; }
-	virtual At_Err_t setInputDevice(Stream& input_dev) { return setInputDevice(&input_dev); }
-	virtual At_Err_t setOutputDevice(Stream* output_dev) { this->_output_dev = output_dev; return AT_EOK; }
-	virtual At_Err_t setOutputDevice(Stream& output_dev) { return setOutputDevice(&output_dev); }
+	At_Err_t setInputDevice(Stream* input_dev) { this->_input_dev = input_dev; return AT_EOK; }
+	At_Err_t setInputDevice(Stream& input_dev) { return this->setInputDevice(&input_dev); }
+	At_Err_t setOutputDevice(Stream* output_dev) { this->_output_dev = output_dev; return AT_EOK; }
+	At_Err_t setOutputDevice(Stream& output_dev) { return this->setOutputDevice(&output_dev); }
 
-	virtual String errorToString(At_Err_t error);
+	String error2String(At_Err_t error) const;
 
-	virtual At_Err_t handle(const String& atLable);
-	virtual At_Err_t handle(const char* atLable) { return handle(String(atLable)); }
+	At_Err_t handle(const String& atLable) const;
+	At_Err_t handle(const char* atLable) const { return this->handle(String(atLable)); }
 	At_Err_t handleAuto(void);
 
-	virtual size_t printf(const char* format, ...)  __attribute__ ((format (printf, 2, 3)));
+	size_t print(const String& message) const { return (this->isOutputDevExists()) ? (this->_output_dev->print(message)) : (0); }
+	size_t print(const char* message) const { return this->print(String(message)); }
 
-	virtual size_t print(const String& message)
-	{ return (isOutputDevExists()) ? (this->_output_dev->print(message)) : (0); }
-	virtual size_t print(const char* message) { return print(String(message)); }
+	size_t println(const String& message) const { return this->print(message + "\n"); }
+	size_t println(const char* message = "") const { return this->println(String(message)); }
 
-	virtual size_t println(const String& message)
-	{ return this->print(message + "\r\n"); }
-	virtual size_t println(const char* message = "") { return println(String(message)); }
+	size_t printf(const char* format, ...) const  __attribute__ ((format (printf, 2, 3)));
 
-	virtual At_Err_t printSet(const String& name = "");
-	virtual At_Err_t printSet(const char* name = "") { return printSet(String(name)); }
+	At_Err_t printSet(const String& name) const;
+	At_Err_t printSet(const char* name = "") const { return this->printSet(String(name)); }
 
-	virtual At_Err_t sendInfor(const String& infor)
-	{ this->_output_dev->print(String("AT+{") + infor + "}"); return AT_EOK; }
-	virtual At_Err_t sendInfor(const char* infor) { return sendInfor(String(infor)); }
+	At_Err_t sendInfor(const String& infor) const {
+		if (this->isOutputDevExists()) {
+			this->_output_dev->print(String("AT+{") + infor + "}");
+			return AT_EOK;
+		} else return AT_ERROR_OUTPUT;
+	}
+	At_Err_t sendInfor(const char* infor = "") const { return this->sendInfor(String(infor)); }
 
 private:
-	At_State_t _atTable;
+	At_Ins_t _atInsSet;
 	Stream* _input_dev;
 	Stream* _output_dev;
 	size_t _param_max_num;
