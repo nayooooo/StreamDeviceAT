@@ -9,7 +9,7 @@
 
 #include <Arduino.h>
 
-#include <vector>
+#include <list>
 using namespace std;
 
 namespace StreamDeviceAT{
@@ -130,7 +130,7 @@ namespace StreamDeviceAT{
 		At_Err_t sendInfor(const char* infor = "") const { return this->sendInfor(String(infor)); }
 
 	private:
-		vector<At_Ins_t> _atInsSet;
+		list<At_Ins_t> _atInsSet;
 		Stream* _input_dev;
 		Stream* _output_dev;
 		size_t _param_max_num;
