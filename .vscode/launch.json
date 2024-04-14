@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "d:/embedded/EmbeddedSoftware/StreamDeviceAT/src",
-      "program": "d:/embedded/EmbeddedSoftware/StreamDeviceAT/src/build/Debug/outDebug",
+      "cwd": "${workspaceFolder}/src",
+      "program": "${workspaceFolder}/src/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
