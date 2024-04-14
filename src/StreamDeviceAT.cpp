@@ -10,7 +10,7 @@ At_Err_t At::cutString(struct At_Param& param, const String& atLable) const
 	size_t param_num = this->getParamMaxNum();
 	if (this->arraySize(param.argv) < param_num) param_num = this->arraySize(param.argv);
 
-	param.cmd = AT_LABLE_TAIL;
+	param.cmd = "";
 	param.argc = 0;
 	for (int i = 0; i < param_num; i++)
 		param.argv[i].clear();
@@ -32,21 +32,16 @@ At_Err_t At::cutString(struct At_Param& param, const String& atLable) const
 
 At_Ins_t At::checkString(struct At_Param& param, const String& atLable) const
 {
-	uint32_t i = 0;
 	At_Ins_t target = nullptr;
 
 	At_Err_t err = this->cutString(param, atLable);
 	if (err != AT_EOK) return nullptr;
 
-	while (this->_atInsSet[i].atLable != AT_LABLE_TAIL)
-	{
-		if (this->_atInsSet[i].atLable == param.cmd)
-		{
-			target = &this->_atInsSet[i];
-			break;
-		}
-		i++;
-	}
+	std::list<struct At_Ins>::const_iterator it = std::find_if(this->_atInsSet.begin(), this->_atInsSet.end(),
+															[param](const struct At_Ins& ins) -> bool {
+																return ins.atLable == param.cmd;
+															});
+	if (it == this->_atInsSet.end() && it->atLable != param.cmd) target = nullptr;
 
 	return target;
 }

@@ -10,7 +10,6 @@
 #include <Arduino.h>
 
 #include <list>
-using namespace std;
 
 namespace StreamDeviceAT{
 
@@ -34,7 +33,6 @@ namespace StreamDeviceAT{
 	};
 	typedef enum At_Err At_Err_t;
 
-	#define AT_LABLE_TAIL ""
 	#define AT_PARAM_MAX_NUM_DEFAULT (3)
 	#define AT_TERMINATOR_DEFAULT '\n'
 	struct At_Param
@@ -59,28 +57,26 @@ namespace StreamDeviceAT{
 	{
 	public:
 		At(
-			const At_Ins_t atTable, Stream* input_dev, Stream* output_dev,
+			Stream* input_dev, Stream* output_dev,
 			size_t param_max_num = AT_PARAM_MAX_NUM_DEFAULT, char terminator = AT_TERMINATOR_DEFAULT
 		):
-		_atInsSet(atTable), _input_dev(input_dev), _output_dev(output_dev), _param_max_num(param_max_num), _terminator(terminator),
-		_readString("")
-		{
-		}
+		_input_dev(input_dev), _output_dev(output_dev), _param_max_num(param_max_num), _terminator(terminator), _readString("")
+		{}
 
 		At(
-			const At_Ins_t atTable, Stream* input_dev, Stream& output_dev,
+			Stream* input_dev, Stream& output_dev,
 			size_t param_max_num = AT_PARAM_MAX_NUM_DEFAULT, char terminator = AT_TERMINATOR_DEFAULT
-		): At(atTable, input_dev, &output_dev, param_max_num, terminator) {}
+		): At(input_dev, &output_dev, param_max_num, terminator) {}
 
 		At(
-			const At_Ins_t atTable, Stream& input_dev, Stream* output_dev,
+			Stream& input_dev, Stream* output_dev,
 			size_t param_max_num = AT_PARAM_MAX_NUM_DEFAULT, char terminator = AT_TERMINATOR_DEFAULT
-		): At(atTable, &input_dev, output_dev, param_max_num, terminator) {}
+		): At(&input_dev, output_dev, param_max_num, terminator) {}
 
 		At(
-			const At_Ins_t atTable, Stream& input_dev, Stream& output_dev,
+			Stream& input_dev, Stream& output_dev,
 			size_t param_max_num = AT_PARAM_MAX_NUM_DEFAULT, char terminator = AT_TERMINATOR_DEFAULT
-		): At(atTable, &input_dev, &output_dev, param_max_num, terminator) {}
+		): At(&input_dev, &output_dev, param_max_num, terminator) {}
 
 	private:
 		template <typename T, size_t N>
@@ -130,7 +126,7 @@ namespace StreamDeviceAT{
 		At_Err_t sendInfor(const char* infor = "") const { return this->sendInfor(String(infor)); }
 
 	private:
-		list<At_Ins_t> _atInsSet;
+		std::list<struct At_Ins> _atInsSet;
 		Stream* _input_dev;
 		Stream* _output_dev;
 		size_t _param_max_num;
