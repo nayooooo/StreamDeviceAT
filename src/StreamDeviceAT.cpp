@@ -133,12 +133,11 @@ At_Err_t At::printSet(const String& name) const
 {
 	this->println();
 	this->println(String("the set(") + name + "): ");
-	if (this->_atInsSet[0].atLable == AT_LABLE_TAIL) {
+	if (this->_atInsSet.size() == 0) {
 		this->println("have nothing AT commond!");
 	} else {
-		for (size_t i = 0; this->_atInsSet[i].atLable != AT_LABLE_TAIL; i++) {
-			String lable = this->_atInsSet[i].atLable;
-			this->println(String("--") + lable);
+		for (struct At_Ins ins : this->_atInsSet) {
+			this->println(String("--") + ins.atLable);
 		}
 	}
 	return AT_EOK;
