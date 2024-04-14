@@ -1,25 +1,7 @@
 #include "at_user.h"
 
-At_Err_t at_user_AT_NULL(At_Param_t param);
-At_Err_t at_user_AT(At_Param_t param);
-At_Err_t at_user_AT_List(At_Param_t param);
-At_Err_t at_user_AT_Reboot(At_Param_t param);
-At_Err_t at_user_led(At_Param_t param);
-
-struct At_Ins atSet[] = {
-    { "AT", AT_TYPE_CMD, at_user_AT },
-    { "AT+LS", AT_TYPE_CMD, at_user_AT_List },
-    { "AT+REBOOT", AT_TYPE_CMD, at_user_AT_Reboot },
-    { "AT+LED", AT_TYPE_CMD, at_user_led },
-    { AT_LABLE_TAIL, AT_TYPE_NULL, at_user_AT_NULL },
-};
-
-At at(atSet, Serial, Serial);
-
-At_Err_t at_user_AT_NULL(At_Param_t param)
-{
-    return AT_EOK;
-}
+At at(Serial, Serial);
+static At _at_led(Serial, Serial);
 
 At_Err_t at_user_AT(At_Param_t param)
 {
@@ -30,14 +12,12 @@ At_Err_t at_user_AT(At_Param_t param)
 At_Err_t at_user_AT_List(At_Param_t param)
 {
     at.printSet("AT");
-    at.sendInfor(AT_USER_OK);
     return AT_EOK;
 }
 
 #include <EspSaveCrash.h>  // reboot
 At_Err_t at_user_AT_Reboot(At_Param_t param)
 {
-    at.sendInfor(AT_USER_OK);
     ESP.reset();
     return AT_EOK;
 }
@@ -45,14 +25,6 @@ At_Err_t at_user_AT_Reboot(At_Param_t param)
 // Establish LED sub instruction set under AT instruction set
 #define _AT_USER_LED_ON      LOW
 #define _AT_USER_LED_OFF     HIGH
-At_Err_t _at_user_led_on(At_Param_t param);
-At_Err_t _at_user_led_off(At_Param_t param);
-struct At_Ins atLEDSet[] = {
-    { "on", AT_TYPE_CMD, _at_user_led_on },
-    { "off", AT_TYPE_CMD, _at_user_led_off },
-    { AT_LABLE_TAIL, AT_TYPE_NULL, at_user_AT_NULL },
-};
-static At _at_led(atLEDSet, Serial, Serial);
 
 At_Err_t at_user_led(At_Param_t param)
 {
@@ -93,5 +65,37 @@ At_Err_t _at_user_led_off(At_Param_t param)
     pinMode(2, OUTPUT);
     digitalWrite(2, _AT_USER_LED_OFF);
     _at_led.sendInfor(AT_USER_OK);
+    return AT_EOK;
+}
+
+At_Err_t _at_user_add_AT_Reboot(At_Param_t param)
+{
+    At_Err_t err = at.addInstruction({ "AT+REBOOT", AT_TYPE_CMD, at_user_AT_Reboot });
+    if (err == AT_EOK) _at_led.sendInfor(AT_USER_OK);
+    else _at_led.sendInfor(AT_USER_ERROR);
+    return err;
+}
+
+At_Err_t _at_user_del_AT_Reboot(At_Param_t param)
+{
+    At_Err_t err = at.delInstruction("AT+REBOOT");
+    if (err == AT_EOK) _at_led.sendInfor(AT_USER_OK);
+    else if (err == AT_ERROR_NOT_FIND) _at_led.sendInfor(AT_USER_ERROR_NOTFIND);
+    else _at_led.sendInfor(AT_USER_ERROR);
+    return err;
+}
+
+At_Err_t at_user_init(void)
+{
+    at.addInstruction({ "AT", AT_TYPE_CMD, at_user_AT });
+    at.addInstruction({ "AT+LS", AT_TYPE_CMD, at_user_AT_List });
+    at.addInstruction({ "AT+REBOOT", AT_TYPE_CMD, at_user_AT_Reboot });
+    at.addInstruction({ "AT+LED", AT_TYPE_CMD, at_user_led });
+    at.addInstruction({ "AT+ADDREBOOT", AT_TYPE_CMD, _at_user_add_AT_Reboot });
+    at.addInstruction({ "AT+DELREBOOT", AT_TYPE_CMD, _at_user_del_AT_Reboot });
+
+    _at_led.addInstruction({ "on", AT_TYPE_CMD, _at_user_led_on });
+    _at_led.addInstruction({ "off", AT_TYPE_CMD, _at_user_led_off });
+
     return AT_EOK;
 }

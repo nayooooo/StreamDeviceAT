@@ -42,11 +42,49 @@ At_Ins_t At::checkString(struct At_Param& param, const String& atLable) const
 																return ins.atLable == param.cmd;
 															});
 	if (it == this->_atInsSet.end() && it->atLable != param.cmd) target = nullptr;
-
-	struct At_Ins& temp = (struct At_Ins&)(*it);  // prevent optimization
-	target = &temp;
+	else {
+		struct At_Ins& temp = (struct At_Ins&)(*it);  // prevent optimization
+		target = &temp;
+	}
 
 	return target;
+}
+
+At_Err_t At::addInstruction(const struct At_Ins& ins)
+{
+	if (ins.atLable.isEmpty()) return AT_ERROR;
+	if (ins.type == AT_TYPE_NULL) return AT_ERROR;
+	if (ins.act == nullptr) return AT_ERROR_NO_ACT;
+
+	std::list<struct At_Ins>::iterator it = std::find_if(this->_atInsSet.begin(), this->_atInsSet.end(),
+															[ins](const struct At_Ins& insr) -> bool {
+																return insr.atLable == ins.atLable;
+															});
+	if (it == this->_atInsSet.end() && it->atLable != ins.atLable) this->_atInsSet.push_back(ins);
+	else return AT_ERROR;
+
+	return AT_EOK;
+}
+
+// TODO(me)
+At_Err_t At::delInstruction(const String& atLable)
+{
+	if (atLable.isEmpty()) return AT_ERROR;
+
+	std::list<struct At_Ins>::iterator it;
+	it = std::find_if(this->_atInsSet.begin(), this->_atInsSet.end(),
+						[atLable](const struct At_Ins& ins) -> bool {
+							return ins.atLable == atLable;
+						});
+	if (it == this->_atInsSet.end() && it->atLable != atLable) return AT_ERROR_NOT_FIND;
+
+	it = std::remove_if(this->_atInsSet.begin(), this->_atInsSet.end(),
+						[atLable](const struct At_Ins& ins) -> bool {
+							return ins.atLable == atLable;
+						});
+	this->_atInsSet.erase(it, this->_atInsSet.end());
+
+	return AT_EOK;
 }
 
 String At::error2String(At_Err_t error) const

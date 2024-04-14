@@ -44,6 +44,7 @@ namespace StreamDeviceAT{
 	typedef struct At_Param* At_Param_t;
 
 	// AT instruction
+	#define AT_ATLABLE_TAIL ""
 	typedef At_Err_t (*At_Act_t)(At_Param_t param);
 	struct At_Ins
 	{
@@ -98,6 +99,9 @@ namespace StreamDeviceAT{
 		At_Err_t setInputDevice(Stream& input_dev) { return this->setInputDevice(&input_dev); }
 		At_Err_t setOutputDevice(Stream* output_dev) { this->_output_dev = output_dev; return AT_EOK; }
 		At_Err_t setOutputDevice(Stream& output_dev) { return this->setOutputDevice(&output_dev); }
+
+		At_Err_t addInstruction(const struct At_Ins& ins);
+		At_Err_t delInstruction(const String& atLable);
 
 		String error2String(At_Err_t error) const;
 

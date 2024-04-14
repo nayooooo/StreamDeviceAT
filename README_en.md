@@ -91,3 +91,7 @@ The following is a simple example code that demonstrates how to use the library:
 2. Please ensure that the serial input/output device is set up correctly.
 3. Serial input/output devices can be subclasses of the Stream class.
 4. Please ensure that each instruction input must end with `\n` and there are no other characters after it.
+
+## AddDMInsSet
+
+1. At least support for C++11 standards is required

@@ -14,3 +14,6 @@
 10. 优化了`At`类中各个方法的逻辑结构
 
 ## AddDMInsSet
+
+1. 需要至少支持C++11标准
+2. 重构部分方法以适应属性`std::list<struct At_Ins> _atInsSet`

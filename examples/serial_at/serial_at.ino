@@ -10,8 +10,10 @@
 
 void setup() {
     Serial.begin(115200UL);
+    at_user_init();
 }
 
 void loop() {
-    at.handleAuto();
+    At_Err_t err = at.handleAuto();
+    if (err == AT_ERROR_NOT_FIND) at.sendInfor(at.error2String(err));
 }

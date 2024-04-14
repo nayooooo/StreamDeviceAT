@@ -105,6 +105,9 @@
     "streambuf": "cpp",
     "cinttypes": "cpp",
     "typeinfo": "cpp",
-    "list": "cpp"
-  }
+    "list": "cpp",
+    "iostream": "cpp"
+  },
+  "cmake.configureOnOpen": true,
+  "cmake.sourceDirectory": "D:/embedded/EmbeddedSoftware/StreamDeviceAT/test/std.remove_if"
 }

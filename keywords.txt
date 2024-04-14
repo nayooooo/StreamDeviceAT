@@ -21,16 +21,17 @@ At_State_t              KEYWORD1
 ###########################################
 
 getParamMaxNum          KEYWORD2
-getStateTable           KEYWORD2
 setInputDevice          KEYWORD2
 setOutputDevice         KEYWORD2
-errorToString           
+addInstruction          KEYWORD2
+delInstruction          KEYWORD2
+errorToString           KEYWORD2
 
 handle                  KEYWORD2
 handleAuto              KEYWORD2
 
-printf                   KEYWORD2
 print                   KEYWORD2
 println                 KEYWORD2
+printf                  KEYWORD2
 printSet                KEYWORD2
 sendInfor               KEYWORD2

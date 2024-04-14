@@ -19,7 +19,7 @@
       },
       "cStandard": "${default}",
       "cppStandard": "${default}",
-      "compilerPath": "C:/Users/YEWAN/mingw64/bin/gcc.exe",
+      "compilerPath": "${env:MinGW_Path}/bin/gcc.exe",
       "intelliSenseMode": "windows-gcc-x64"
     }
   ],
