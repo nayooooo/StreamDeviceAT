@@ -43,6 +43,9 @@ At_Ins_t At::checkString(struct At_Param& param, const String& atLable) const
 															});
 	if (it == this->_atInsSet.end() && it->atLable != param.cmd) target = nullptr;
 
+	struct At_Ins& temp = (struct At_Ins&)(*it);  // prevent optimization
+	target = &temp;
+
 	return target;
 }
 
