@@ -7,8 +7,10 @@
 #ifndef __STREAMDEVICEAT_H__
 #define __STREAMDEVICEAT_H__
 
-#include <stdlib.h>
 #include <Arduino.h>
+
+#include <vector>
+using namespace std;
 
 namespace StreamDeviceAT{
 
@@ -128,7 +130,7 @@ namespace StreamDeviceAT{
 		At_Err_t sendInfor(const char* infor = "") const { return this->sendInfor(String(infor)); }
 
 	private:
-		At_Ins_t _atInsSet;
+		vector<At_Ins_t> _atInsSet;
 		Stream* _input_dev;
 		Stream* _output_dev;
 		size_t _param_max_num;
