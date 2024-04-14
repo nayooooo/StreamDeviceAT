@@ -93,7 +93,6 @@ namespace StreamDeviceAT{
 
 	public:
 		size_t getParamMaxNum(void) const { return this->_param_max_num; }
-		At_Ins_t getInsSet(void) const { return this->_atInsSet; }
 
 		At_Err_t setInputDevice(Stream* input_dev) { this->_input_dev = input_dev; return AT_EOK; }
 		At_Err_t setInputDevice(Stream& input_dev) { return this->setInputDevice(&input_dev); }
