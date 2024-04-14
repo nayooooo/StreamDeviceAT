@@ -1,5 +1,7 @@
 #include "StreamDeviceAT.h"
 
+using namespace StreamDeviceAT;
+
 At_Err_t At::cutString(struct At_Param& param, const String& atLable) const
 {
 	if (atLable.isEmpty()) return AT_ERROR;  // do not accept empty string
