@@ -8,10 +8,8 @@ This library implements an AT instruction parser that can parse AT instructions 
 
 ## initialization
 
-    At at(atTable, &input_dev, &output_dev, param_max_num, terminator);
-    At at(atTable, input_dev, output_dev, param_max_num, terminator);
-
-`atTable`: The AT instruction status table defines the supported AT instructions and their processing functions.
+    At at(&input_dev, &output_dev, param_max_num, terminator);
+    At at(input_dev, output_dev, param_max_num, terminator);
 
 `input_dev`: Serial input device.
 
@@ -64,24 +62,27 @@ The following is a simple example code that demonstrates how to use the library:
         return AT_EOK;
     }
 
-    // Define AT instruction status table
-    At_State stateTable[] = {
-        {"AT+CMD1", AT_TYPE_CMD, handleCmd1},
-        {"AT+CMD2", AT_TYPE_CMD, handleCmd2},
-        {AT_LABLE_TAIL, AT_TYPE_NULL, nullptr}
-    };
-
     // Instantiate an AT instruction parser
-    At at(stateTable, Serial, Serial);
+    At at(Serial, Serial);
+
+    At_Err_t at_user_init(void)
+    {
+        at.addInstruction({"AT+CMD1", AT_TYPE_CMD, handleCmd1});
+        at.addInstruction({"AT+CMD2", AT_TYPE_CMD, handleCmd2});
+
+        return AT_EOK;
+    }
 
     void setup()
     {
         Serial.begin(115200UL);
+        at_user_init();
     }
 
     void loop()
     {
-        at.handleAuto();
+        At_Err_t err = at.handleAuto();
+        if (err == AT_ERROR_NOT_FIND) at.sendInfor(at.error2String(err));
         // Other logical processing
     }
 

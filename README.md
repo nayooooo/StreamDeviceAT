@@ -8,10 +8,8 @@
 
 ## 初始化
 
-    At at(atTable, &input_dev, &output_dev, param_max_num, terminator);
-    At at(atTable, input_dev, output_dev, param_max_num, terminator);
-
-`atTable`：AT指令状态表，定义了支持的AT指令及其处理函数。
+    At at(&input_dev, &output_dev, param_max_num, terminator);
+    At at(input_dev, output_dev, param_max_num, terminator);
 
 `input_dev`：串行输入设备。
 
@@ -64,24 +62,27 @@
         return AT_EOK;
     }
 
-    // 定义AT指令状态表
-    At_State stateTable[] = {
-        {"AT+CMD1", AT_TYPE_CMD, handleCmd1},
-        {"AT+CMD2", AT_TYPE_CMD, handleCmd2},
-        {AT_LABLE_TAIL, AT_TYPE_NULL, nullptr}
-    };
-
     // 实例化一个AT指令解析器
-    At at(stateTable, Serial, Serial);
+    At at(Serial, Serial);
+
+    At_Err_t at_user_init(void)
+    {
+        at.addInstruction({"AT+CMD1", AT_TYPE_CMD, handleCmd1});
+        at.addInstruction({"AT+CMD2", AT_TYPE_CMD, handleCmd2});
+
+        return AT_EOK;
+    }
 
     void setup()
     {
         Serial.begin(115200UL);
+        at_user_init();
     }
 
     void loop()
     {
-        at.handleAuto();
+        At_Err_t err = at.handleAuto();
+        if (err == AT_ERROR_NOT_FIND) at.sendInfor(at.error2String(err));
         // 其他逻辑处理
     }
 
