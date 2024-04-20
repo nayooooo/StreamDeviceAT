@@ -2,10 +2,10 @@
 
 using namespace StreamDeviceAT;
 
-At_Err_t At::cutString(struct At_Param& param, const String& atLable) const
+At_Err_t At::cutString(struct At_Param& param, const String& pendIns) const
 {
-	if (atLable.isEmpty()) return AT_ERROR;  // do not accept empty string
-	char* str = (char*)(atLable.c_str());
+	if (pendIns.isEmpty()) return AT_ERROR;  // do not accept empty string
+	char* str = (char*)(pendIns.c_str());
 
 	size_t param_num = this->getParamMaxNum();
 	if (this->arraySize(param.argv) < param_num) param_num = this->arraySize(param.argv);
@@ -30,11 +30,11 @@ At_Err_t At::cutString(struct At_Param& param, const String& atLable) const
 	return AT_EOK;
 }
 
-At_Ins_t At::checkString(struct At_Param& param, const String& atLable) const
+At_Ins_t At::checkString(struct At_Param& param, const String& pendIns) const
 {
 	At_Ins_t target = nullptr;
 
-	At_Err_t err = this->cutString(param, atLable);
+	At_Err_t err = this->cutString(param, pendIns);
 	if (err != AT_EOK) return nullptr;
 
 	std::list<struct At_Ins>::const_iterator it = std::find_if(this->_atInsSet.begin(), this->_atInsSet.end(),
@@ -66,7 +66,6 @@ At_Err_t At::addInstruction(const struct At_Ins& ins)
 	return AT_EOK;
 }
 
-// TODO(me)
 At_Err_t At::delInstruction(const String& atLable)
 {
 	if (atLable.isEmpty()) return AT_ERROR;
@@ -87,30 +86,30 @@ At_Err_t At::delInstruction(const String& atLable)
 	return AT_EOK;
 }
 
-String At::error2String(At_Err_t error) const
+const char* At::error2String(At_Err_t error) const
 {
 	switch (error)
 	{
 	case AT_ERROR:
-		return String("AT normal error");
+		return "AT normal error";
 	case AT_ERROR_INPUT:
-		return String("AT input device error");
+		return "AT input device error";
 	case AT_ERROR_OUTPUT:
-		return String("AT output device error");
+		return "AT output device error";
 	case AT_ERROR_NOT_FIND:
-		return String("AT not find this string command");
+		return "AT not find this string command";
 	case AT_ERROR_NO_ACT:
-		return String("AT this string command not have act");
+		return "AT this string command not have act";
 	case AT_ERROR_CANNOT_CUT:
-		return String("AT this string can't be cut");
+		return "AT this string can't be cut";
 	}
-	return String("AT no error");
+	return "AT no error";
 }
 
-At_Err_t At::handle(const String& atLable) const
+At_Err_t At::handle(const String& pendIns) const
 {
 	struct At_Param param;
-	At_Ins_t target = this->checkString(param, atLable);
+	At_Ins_t target = this->checkString(param, pendIns);
 
 	if (target == nullptr)
 		return AT_ERROR_NOT_FIND;

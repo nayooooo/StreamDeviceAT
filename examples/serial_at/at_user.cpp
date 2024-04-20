@@ -9,6 +9,20 @@ At_Err_t at_user_AT(At_Param_t param)
     return AT_EOK;
 }
 
+At_Err_t at_user_AT_Echo(At_Param_t param)
+{
+    at.println();
+    at.println("args: ");
+    if (param->argc == 0) {
+        at.println("\tno arg");
+    }
+    for (int i = 0; i < param->argc; i++) {
+        at.printf("\t[%d] %s", i, param->argv[i]);
+        at.println();
+    }
+    return AT_EOK;
+}
+
 At_Err_t at_user_AT_List(At_Param_t param)
 {
     at.printSet("AT");
@@ -88,6 +102,7 @@ At_Err_t _at_user_del_AT_Reboot(At_Param_t param)
 At_Err_t at_user_init(void)
 {
     at.addInstruction({ "AT", AT_TYPE_CMD, at_user_AT });
+    at.addInstruction({ "AT+ECHO", AT_TYPE_CMD, at_user_AT_Echo });
     at.addInstruction({ "AT+LS", AT_TYPE_CMD, at_user_AT_List });
     at.addInstruction({ "AT+REBOOT", AT_TYPE_CMD, at_user_AT_Reboot });
     at.addInstruction({ "AT+LED", AT_TYPE_CMD, at_user_led });

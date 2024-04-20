@@ -11,6 +11,11 @@
 
 #include <list>
 
+// 需要至少支持C++11
+#if __cplusplus <= 199711L
+	#error This library needs at least a C++11 compliant compiler
+#endif
+
 namespace StreamDeviceAT{
 
 	enum At_Type
@@ -39,6 +44,7 @@ namespace StreamDeviceAT{
 	{
 		String cmd;
 		int argc;
+		// TODO(me) Modify to a parameter number that can be set
 		String argv[AT_PARAM_MAX_NUM_DEFAULT];
 	};
 	typedef struct At_Param* At_Param_t;
@@ -89,8 +95,8 @@ namespace StreamDeviceAT{
 		bool isInputDevExists(void) const { return (this->_input_dev != nullptr) ? true: false; }
 		bool isOutputDevExists(void) const { return (this->_output_dev != nullptr) ? true: false; }
 
-		At_Err_t cutString(struct At_Param& param, const String& atLable) const;
-		At_Ins_t checkString(struct At_Param& param, const String& atLable) const;
+		At_Err_t cutString(struct At_Param& param, const String& pendIns) const;
+		At_Ins_t checkString(struct At_Param& param, const String& pendIns) const;
 
 	public:
 		size_t getParamMaxNum(void) const { return this->_param_max_num; }
@@ -103,10 +109,10 @@ namespace StreamDeviceAT{
 		At_Err_t addInstruction(const struct At_Ins& ins);
 		At_Err_t delInstruction(const String& atLable);
 
-		String error2String(At_Err_t error) const;
+		const char* error2String(At_Err_t error) const;
 
-		At_Err_t handle(const String& atLable) const;
-		At_Err_t handle(const char* atLable) const { return this->handle(String(atLable)); }
+		At_Err_t handle(const String& pendIns) const;
+		At_Err_t handle(const char* pendIns) const { return this->handle(String(pendIns)); }
 		At_Err_t handleAuto(void);
 
 		size_t print(const String& message) const { return (this->isOutputDevExists()) ? (this->_output_dev->print(message)) : (0); }

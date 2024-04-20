@@ -17,3 +17,10 @@
 
 1. 需要至少支持C++11标准
 2. 重构部分方法以适应属性`std::list<struct At_Ins> _atInsSet`
+
+## DMInsSet.LessRAM
+
+1. 将`At::error2String`中的字符串替换为字符串字面量，降低动态内存分配带来的内存占用和性能消耗
+2. 在预编译时期增加`C++11`标准判断，以便更清晰地提示错误
+3. 将`At::cutString`、`At::checkString`、`At::handle`中的形参`atLable`改成`pendIns`，因为它是个未经处理的字符串，而不是AT指令标签
+4. 在`./examples/serial_at`中添加`AT+ECHO`指令，用于回显参数
