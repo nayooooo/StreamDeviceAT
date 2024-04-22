@@ -9,6 +9,7 @@
 
 #include <Arduino.h>
 
+#include <vector>
 #include <list>
 
 // 需要至少支持C++11
@@ -44,8 +45,7 @@ namespace StreamDeviceAT{
 	{
 		String cmd;
 		int argc;
-		// TODO(me) Modify to a parameter number that can be set
-		String argv[AT_PARAM_MAX_NUM_DEFAULT];
+		std::vector<String> argv;
 	};
 	typedef struct At_Param* At_Param_t;
 
@@ -68,7 +68,11 @@ namespace StreamDeviceAT{
 			size_t param_max_num = AT_PARAM_MAX_NUM_DEFAULT, char terminator = AT_TERMINATOR_DEFAULT
 		):
 		_input_dev(input_dev), _output_dev(output_dev), _param_max_num(param_max_num), _terminator(terminator), _readString("")
-		{}
+		{
+			if (this->_param_max_num <= 0) {
+				_param_max_num = 1;
+			}
+		}
 
 		At(
 			Stream* input_dev, Stream& output_dev,
@@ -85,13 +89,12 @@ namespace StreamDeviceAT{
 			size_t param_max_num = AT_PARAM_MAX_NUM_DEFAULT, char terminator = AT_TERMINATOR_DEFAULT
 		): At(&input_dev, &output_dev, param_max_num, terminator) {}
 
-	private:
-		template <typename T, size_t N>
-		constexpr size_t arraySize(T (&)[N]) const
+		~At()
 		{
-			return N;
+			this->_atInsSet.clear();
 		}
 
+	private:
 		bool isInputDevExists(void) const { return (this->_input_dev != nullptr) ? true: false; }
 		bool isOutputDevExists(void) const { return (this->_output_dev != nullptr) ? true: false; }
 

@@ -24,3 +24,10 @@
 2. 在预编译时期增加`C++11`标准判断，以便更清晰地提示错误
 3. 将`At::cutString`、`At::checkString`、`At::handle`中的形参`atLable`改成`pendIns`，因为它是个未经处理的字符串，而不是AT指令标签
 4. 在`./examples/serial_at`中添加`AT+ECHO`指令，用于回显参数
+5. 增加析构函数以清空`At::_atInsSet`
+6. 删除模板`At::arraySize`
+7. 将`StreamDeviceAT::At_Param::argv`的类型由`String`改成`std::vector<String>`以适应不同长度的参数表
+8. 向构造函数中添加了参数数目判断，如果输入值小于等于0，那么修改为1
+9. 修改行为`At::handle`以适应新的vector模板参数
+10. 修改行为`At::cutString`以适应新的vector模板参数
+11. 在`./examples/serial_at`中修改变量`at`的最大参数数为`10`

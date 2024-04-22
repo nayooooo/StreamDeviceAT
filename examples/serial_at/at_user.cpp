@@ -1,6 +1,6 @@
 #include "at_user.h"
 
-At at(Serial, Serial);
+At at(Serial, Serial, 10);
 static At _at_led(Serial, Serial);
 
 At_Err_t at_user_AT(At_Param_t param)

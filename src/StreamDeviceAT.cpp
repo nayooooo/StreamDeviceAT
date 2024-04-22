@@ -8,12 +8,10 @@ At_Err_t At::cutString(struct At_Param& param, const String& pendIns) const
 	char* str = (char*)(pendIns.c_str());
 
 	size_t param_num = this->getParamMaxNum();
-	if (this->arraySize(param.argv) < param_num) param_num = this->arraySize(param.argv);
 
 	param.cmd = "";
 	param.argc = 0;
-	for (int i = 0; i < param_num; i++)
-		param.argv[i].clear();
+	param.argv.clear();
 
 	// find at set
 	param.cmd = strtok(str, " \r\n");
@@ -21,9 +19,10 @@ At_Err_t At::cutString(struct At_Param& param, const String& pendIns) const
 	// find at param
 	for (int i = 0; i < param_num; i++)
 	{
-		param.argv[i] = strtok(NULL, " \r\n");
-		if (param.argv[i].isEmpty())
+		String temp = strtok(NULL, " \r\n");
+		if (temp.isEmpty())
 			break;
+		param.argv.push_back(temp);
 		param.argc++;
 	}
 
@@ -108,16 +107,23 @@ const char* At::error2String(At_Err_t error) const
 
 At_Err_t At::handle(const String& pendIns) const
 {
+	At_Err_t ret;
 	struct At_Param param;
 	At_Ins_t target = this->checkString(param, pendIns);
 
-	if (target == nullptr)
-		return AT_ERROR_NOT_FIND;
-	if (target->act == nullptr)
-		return AT_ERROR_NO_ACT;
+	if (target == nullptr) {
+		ret = AT_ERROR_NOT_FIND;
+		goto error_out;
+	}
+	if (target->act == nullptr) {
+		ret = AT_ERROR_NO_ACT;
+		goto error_out;
+	}
 
-	At_Err_t ret = target->act(&param);
+	ret = target->act(&param);
 
+error_out:
+	param.argv.clear();
 	return ret;
 }
 
