@@ -55,7 +55,6 @@ At_Err_t at_user_led(At_Param_t param)
     }
     err = _at_led.handle(str);
     if (err != AT_EOK) goto err_out;
-    at.sendInfor(AT_USER_OK);
     return err;
 
     if (0) {
@@ -70,7 +69,6 @@ At_Err_t _at_user_led_on(At_Param_t param)
 {
     pinMode(2, OUTPUT);
     digitalWrite(2, _AT_USER_LED_ON);
-    _at_led.sendInfor(AT_USER_OK);
     return AT_EOK;
 }
 
@@ -78,7 +76,6 @@ At_Err_t _at_user_led_off(At_Param_t param)
 {
     pinMode(2, OUTPUT);
     digitalWrite(2, _AT_USER_LED_OFF);
-    _at_led.sendInfor(AT_USER_OK);
     return AT_EOK;
 }
 
