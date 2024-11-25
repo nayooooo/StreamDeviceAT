@@ -5,6 +5,8 @@ using namespace StreamDeviceAT;
 At_Err_t At::cutString(struct At_Param& param, const String& pendIns) const
 {
 	if (pendIns.isEmpty()) return AT_ERROR;  // do not accept empty string
+	// TODO: If necessary, modify to create a copy of the character array,
+	//       as this function will modify the resulting character array
 	char* str = (char*)(pendIns.c_str());
 
 	size_t param_num = this->getParamMaxNum();
