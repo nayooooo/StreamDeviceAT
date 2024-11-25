@@ -1,6 +1,6 @@
 # 更新日志（Branch）
 
-## AddDynamicManagingATInstructionSet
+## AddDMInsSet
 
 1. 将StreamDeviceAT_Type.h文件中的宏`AT_PARAM_MAX_NUM`重命名为`AT_PARAM_MAX_NUM_DEFAULT`
 2. 在StreamDeviceAT_Type.h文件中新增宏`AT_TERMINATOR_DEFAULT`用于表示接收字符串的结束符
@@ -12,11 +12,8 @@
 8. 给`At`类中相应的方法加上了`const`
 9. 添加预编译宏，确保能够使用`std::size`来获取字符串数组的数组大小
 10. 优化了`At`类中各个方法的逻辑结构
-
-## AddDMInsSet
-
-1. 需要至少支持C++11标准
-2. 重构部分方法以适应属性`std::list<struct At_Ins> _atInsSet`
+11. 需要至少支持C++11标准
+12. 重构部分方法以适应属性`std::list<struct At_Ins> _atInsSet`
 
 ## DMInsSet.LessRAM
 
