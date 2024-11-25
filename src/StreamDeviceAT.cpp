@@ -40,7 +40,7 @@ At_Ins_t At::checkString(struct At_Param& param, const String& pendIns) const
 															[param](const struct At_Ins& ins) -> bool {
 																return ins.atLable == param.cmd;
 															});
-	if (it == this->_atInsSet.end() && it->atLable != param.cmd) target = nullptr;
+	if (it == this->_atInsSet.end()) target = nullptr;
 	else {
 		struct At_Ins& temp = (struct At_Ins&)(*it);  // prevent optimization
 		target = &temp;
@@ -59,8 +59,9 @@ At_Err_t At::addInstruction(const struct At_Ins& ins)
 															[ins](const struct At_Ins& insr) -> bool {
 																return insr.atLable == ins.atLable;
 															});
-	if (it == this->_atInsSet.end() && it->atLable != ins.atLable) this->_atInsSet.push_back(ins);
-	else return AT_ERROR;
+	if (it != this->_atInsSet.end()) return AT_ERROR_DUPLICATE_LABEL;
+
+	this->_atInsSet.push_back(ins);
 
 	return AT_EOK;
 }
@@ -74,13 +75,10 @@ At_Err_t At::delInstruction(const String& atLable)
 						[atLable](const struct At_Ins& ins) -> bool {
 							return ins.atLable == atLable;
 						});
-	if (it == this->_atInsSet.end() && it->atLable != atLable) return AT_ERROR_NOT_FIND;
+	if (it == this->_atInsSet.end()) return AT_ERROR_NOT_FIND;
 
-	it = std::remove_if(this->_atInsSet.begin(), this->_atInsSet.end(),
-						[atLable](const struct At_Ins& ins) -> bool {
-							return ins.atLable == atLable;
-						});
-	this->_atInsSet.erase(it, this->_atInsSet.end());
+	// erase one
+	this->_atInsSet.erase(it);
 
 	return AT_EOK;
 }

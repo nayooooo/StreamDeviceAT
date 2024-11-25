@@ -16,4 +16,5 @@ void setup() {
 void loop() {
     At_Err_t err = at.handleAuto();
     if (err == AT_ERROR_NOT_FIND) at.sendInfor(at.error2String(err));
+    delay(1);
 }

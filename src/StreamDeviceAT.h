@@ -36,6 +36,7 @@ namespace StreamDeviceAT{
 		AT_ERROR_NOT_FIND,
 		AT_ERROR_NO_ACT,
 		AT_ERROR_CANNOT_CUT,
+		AT_ERROR_DUPLICATE_LABEL,
 	};
 	typedef enum At_Err At_Err_t;
 
