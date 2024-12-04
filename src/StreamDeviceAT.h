@@ -111,7 +111,8 @@ namespace StreamDeviceAT{
 		At_Err_t setOutputDevice(Stream* output_dev) { this->_output_dev = output_dev; return AT_EOK; }
 		At_Err_t setOutputDevice(Stream& output_dev) { return this->setOutputDevice(&output_dev); }
 
-		At_Err_t addInstruction(const struct At_Ins& ins);
+		At_Err_t addInstruction(const struct At_Ins& ins) { return this->addInstruction(At_Ins(ins)); }
+		At_Err_t addInstruction(struct At_Ins&& ins);
 		At_Err_t delInstruction(const String& atLable);
 
 		const char* error2String(At_Err_t error) const;

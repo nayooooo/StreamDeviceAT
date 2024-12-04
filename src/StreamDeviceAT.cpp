@@ -51,7 +51,7 @@ At_Ins_t At::checkString(struct At_Param& param, String&& pendIns) const
 	return target;
 }
 
-At_Err_t At::addInstruction(const struct At_Ins& ins)
+At_Err_t At::addInstruction(struct At_Ins&& ins)
 {
 	if (ins.atLable.isEmpty()) return AT_ERROR;
 	if (ins.type == AT_TYPE_NULL) return AT_ERROR;
@@ -63,7 +63,7 @@ At_Err_t At::addInstruction(const struct At_Ins& ins)
 															});
 	if (it != this->_atInsSet.end()) return AT_ERROR_DUPLICATE_LABEL;
 
-	this->_atInsSet.push_back(ins);
+	this->_atInsSet.push_back(std::move(ins));
 
 	return AT_EOK;
 }
