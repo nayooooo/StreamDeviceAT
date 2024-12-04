@@ -100,8 +100,8 @@ namespace StreamDeviceAT{
 		bool isInputDevExists(void) const { return (this->_input_dev != nullptr) ? true: false; }
 		bool isOutputDevExists(void) const { return (this->_output_dev != nullptr) ? true: false; }
 
-		At_Err_t cutString(struct At_Param& param, const String& pendIns) const;
-		At_Ins_t checkString(struct At_Param& param, const String& pendIns) const;
+		At_Err_t cutString(struct At_Param& param, String&& pendIns) const;
+		At_Ins_t checkString(struct At_Param& param, String&& pendIns) const;
 
 	public:
 		size_t getParamMaxNum(void) const { return this->_param_max_num; }

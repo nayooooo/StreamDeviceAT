@@ -2,7 +2,7 @@
 
 using namespace StreamDeviceAT;
 
-At_Err_t At::cutString(struct At_Param& param, const String& pendIns) const
+At_Err_t At::cutString(struct At_Param& param, String&& pendIns) const
 {
 	if (pendIns.isEmpty()) return AT_ERROR;  // do not accept empty string
 	// TODO: If necessary, modify to create a copy of the character array,
@@ -31,11 +31,11 @@ At_Err_t At::cutString(struct At_Param& param, const String& pendIns) const
 	return AT_EOK;
 }
 
-At_Ins_t At::checkString(struct At_Param& param, const String& pendIns) const
+At_Ins_t At::checkString(struct At_Param& param, String&& pendIns) const
 {
 	At_Ins_t target = nullptr;
 
-	At_Err_t err = this->cutString(param, pendIns);
+	At_Err_t err = this->cutString(param, std::move(pendIns));
 	if (err != AT_EOK) return nullptr;
 
 	std::list<struct At_Ins>::const_iterator it = std::find_if(this->_atInsSet.begin(), this->_atInsSet.end(),
@@ -111,7 +111,7 @@ At_Err_t At::handle(String&& pendIns) const
 {
 	At_Err_t ret;
 	struct At_Param param;
-	At_Ins_t target = this->checkString(param, pendIns);
+	At_Ins_t target = this->checkString(param, std::move(pendIns));
 
 	if (target == nullptr) {
 		ret = AT_ERROR_NOT_FIND;
