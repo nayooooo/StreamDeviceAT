@@ -137,11 +137,11 @@ At_Err_t At::handleAuto(void)
 
 	if (this->_input_dev->available()) {
 		in = this->_input_dev->read();
-		if ((in >= 0) && ((char)in != this->_terminator)) {
-			this->_readString += (char)in;
-			return AT_EOK;
-		} else if ((char)in == this->_terminator) {
-			At_Err_t err = this->handle(this->_readString);
+		if (in < 0) return AT_ERROR_INPUT;
+		this->_readString += (char)in;
+		if (this->_readString.endsWith(this->_terminator)) {
+			this->_readString.remove(this->_readString.length() - this->_terminator.length(), this->_terminator.length());
+			At_Err_t err = this->handle(std::move(this->_readString));
 			this->_readString.clear();
 			return err;
 		}

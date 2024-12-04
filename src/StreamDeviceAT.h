@@ -42,7 +42,7 @@ namespace StreamDeviceAT{
 	typedef enum At_Err At_Err_t;
 
 	#define AT_PARAM_MAX_NUM_DEFAULT (3)
-	#define AT_TERMINATOR_DEFAULT '\n'
+	#define AT_TERMINATOR_DEFAULT "\n"
 	struct At_Param
 	{
 		String cmd;
@@ -67,7 +67,7 @@ namespace StreamDeviceAT{
 	public:
 		At(
 			Stream* input_dev, Stream* output_dev,
-			size_t param_max_num = AT_PARAM_MAX_NUM_DEFAULT, char terminator = AT_TERMINATOR_DEFAULT
+			size_t param_max_num = AT_PARAM_MAX_NUM_DEFAULT, String terminator = AT_TERMINATOR_DEFAULT
 		):
 		_input_dev(input_dev), _output_dev(output_dev), _param_max_num(param_max_num), _terminator(terminator), _readString("")
 		{
@@ -78,17 +78,17 @@ namespace StreamDeviceAT{
 
 		At(
 			Stream* input_dev, Stream& output_dev,
-			size_t param_max_num = AT_PARAM_MAX_NUM_DEFAULT, char terminator = AT_TERMINATOR_DEFAULT
+			size_t param_max_num = AT_PARAM_MAX_NUM_DEFAULT, String terminator = AT_TERMINATOR_DEFAULT
 		): At(input_dev, &output_dev, param_max_num, terminator) {}
 
 		At(
 			Stream& input_dev, Stream* output_dev,
-			size_t param_max_num = AT_PARAM_MAX_NUM_DEFAULT, char terminator = AT_TERMINATOR_DEFAULT
+			size_t param_max_num = AT_PARAM_MAX_NUM_DEFAULT, String terminator = AT_TERMINATOR_DEFAULT
 		): At(&input_dev, output_dev, param_max_num, terminator) {}
 
 		At(
 			Stream& input_dev, Stream& output_dev,
-			size_t param_max_num = AT_PARAM_MAX_NUM_DEFAULT, char terminator = AT_TERMINATOR_DEFAULT
+			size_t param_max_num = AT_PARAM_MAX_NUM_DEFAULT, String terminator = AT_TERMINATOR_DEFAULT
 		): At(&input_dev, &output_dev, param_max_num, terminator) {}
 
 		~At()
@@ -122,7 +122,7 @@ namespace StreamDeviceAT{
 		At_Err_t handleAuto(void);
 
 		size_t print(const String& message) const { return (this->isOutputDevExists()) ? (this->_output_dev->print(message)) : (0); }
-		size_t print(const char* message) const { return this->print(String(message)); }
+		size_t print(const char* message) const { return (this->isOutputDevExists()) ? this->print(String(message)) : (0); }
 
 		size_t println(const String& message) const { return this->print(message + "\n"); }
 		size_t println(const char* message = "") const { return this->println(String(message)); }
@@ -145,7 +145,7 @@ namespace StreamDeviceAT{
 		Stream* _input_dev;
 		Stream* _output_dev;
 		size_t _param_max_num;
-		char _terminator;
+		String _terminator;  // only use in At::handleAuto
 		String _readString;
 	};
 
