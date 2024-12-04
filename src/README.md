@@ -32,6 +32,7 @@
 ## V1-MoreFlexibleParameters
 
 1. 重构了`At::handle`，达到不改变传入参数的目的
+2. 重构了`At::addInstruction`，达到传递匿名结构体时不再次构造对象的目的
 
 TODO:
 
