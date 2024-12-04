@@ -4,6 +4,7 @@
       "name": "windows-gcc-x64",
       "includePath": [
         "${workspaceFolder}/**",
+        "${workspaceFolder}/src/**",
         "${env:MyUser_Path}/AppData/Local/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/cores/esp8266/**",
         "${env:MyUser_Path}/AppData/Local/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/tools/sdk/**",
         "${env:MyUser_Path}/AppData/Local/Arduino15/packages/esp8266/tools/xtensa-lx106-elf-gcc/3.1.0-gcc10.3-e5f9fec/xtensa-lx106-elf/**"
@@ -11,6 +12,7 @@
       "browse": {
         "path": [
           "${workspaceFolder}",
+          "${workspaceFolder}/src",
           "${env:MyUser_Path}/AppData/Local/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/cores/esp8266",
           "${env:MyUser_Path}/AppData/Local/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/tools/sdk",
           "${env:MyUser_Path}/AppData/Local/Arduino15/packages/esp8266/tools/xtensa-lx106-elf-gcc/3.1.0-gcc10.3-e5f9fec/xtensa-lx106-elf"
@@ -18,7 +20,7 @@
         "limitSymbolsToIncludedHeaders": false
       },
       "cStandard": "${default}",
-      "cppStandard": "${default}",
+      "cppStandard": "c++11",
       "compilerPath": "${env:MinGW_Path}/bin/gcc.exe",
       "intelliSenseMode": "windows-gcc-x64"
     }

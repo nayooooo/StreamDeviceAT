@@ -91,6 +91,8 @@ const char* At::error2String(At_Err_t error) const
 	{
 	case AT_ERROR:
 		return "AT normal error";
+	case AT_ERROR_NULL_OBJECT:
+		return "AT object is nullptr";
 	case AT_ERROR_INPUT:
 		return "AT input device error";
 	case AT_ERROR_OUTPUT:
@@ -105,7 +107,7 @@ const char* At::error2String(At_Err_t error) const
 	return "AT no error";
 }
 
-At_Err_t At::handle(const String& pendIns) const
+At_Err_t At::handle(String&& pendIns) const
 {
 	At_Err_t ret;
 	struct At_Param param;

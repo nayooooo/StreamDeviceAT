@@ -13,7 +13,7 @@
 #include <list>
 
 // 需要至少支持C++11
-#if __cplusplus <= 199711L
+#if __cplusplus < 201103L
 	#error This library needs at least a C++11 compliant compiler
 #endif
 
@@ -31,6 +31,7 @@ namespace StreamDeviceAT{
 	{
 		AT_EOK = 0,
 		AT_ERROR,
+		AT_ERROR_NULL_OBJECT,
 		AT_ERROR_INPUT,
 		AT_ERROR_OUTPUT,
 		AT_ERROR_NOT_FIND,
@@ -115,8 +116,8 @@ namespace StreamDeviceAT{
 
 		const char* error2String(At_Err_t error) const;
 
-		At_Err_t handle(const String& pendIns) const;
-		At_Err_t handle(const char* pendIns) const { return this->handle(String(pendIns)); }
+		At_Err_t handle(const String& pendIns) const { return this->handle(String(pendIns)); }
+		At_Err_t handle(String&& pendIns) const;
 		At_Err_t handleAuto(void);
 
 		size_t print(const String& message) const { return (this->isOutputDevExists()) ? (this->_output_dev->print(message)) : (0); }

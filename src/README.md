@@ -28,3 +28,13 @@
 9. 修改行为`At::handle`以适应新的vector模板参数
 10. 修改行为`At::cutString`以适应新的vector模板参数
 11. 在`./examples/serial_at`中修改变量`at`的最大参数数为`10`
+
+## V1-MoreFlexibleParameters
+
+1. 重构了`At::handle`，达到不改变传入参数的目的
+
+TODO:
+
+1. 将`At::_terminator`的类型换成`String`
+2. 设置`At`类的深拷贝构造函数，同时配合着修改析构函数
+3. 重载运算符`+`和`-`，用于增删指令条目，如加上单条指令或加上另一个对象的指令
