@@ -91,6 +91,13 @@ namespace StreamDeviceAT{
 			size_t param_max_num = AT_PARAM_MAX_NUM_DEFAULT, String terminator = AT_TERMINATOR_DEFAULT
 		): At(&input_dev, &output_dev, param_max_num, terminator) {}
 
+		// deep copy
+		At(const At& at)
+		  : _input_dev(at._input_dev), _output_dev(at._output_dev),
+			_param_max_num(at._param_max_num), _terminator(at._terminator),
+			_readString(at._readString), _atInsSet(at._atInsSet)
+		{}
+
 		~At()
 		{
 			this->_atInsSet.clear();
@@ -114,6 +121,7 @@ namespace StreamDeviceAT{
 		At_Err_t addInstruction(const struct At_Ins& ins) { return this->addInstruction(At_Ins(ins)); }
 		At_Err_t addInstruction(struct At_Ins&& ins);
 		At_Err_t delInstruction(const String& atLable);
+		At_Err_t delInstruction(const struct At_Ins& ins) { return this->delInstruction(ins.atLable); };
 
 		const char* error2String(At_Err_t error) const;
 
@@ -139,6 +147,39 @@ namespace StreamDeviceAT{
 			} else return AT_ERROR_OUTPUT;
 		}
 		At_Err_t sendInfor(const char* infor = "") const { return this->sendInfor(String(infor)); }
+
+	public:
+		At& operator+=(const struct At_Ins& ins) {
+			this->addInstruction(ins);
+			return *this;
+		}
+		At& operator+=(struct At_Ins&& ins) {
+			this->addInstruction(std::move(ins));
+			return *this;
+		}
+		At& operator+=(const At& at) {
+			for (const struct At_Ins& item : at._atInsSet)
+			{
+				this->addInstruction(item);
+			}
+			return *this;
+		}
+
+		At& operator-=(const String& atLable) {
+			this->delInstruction(atLable);
+			return *this;
+		}
+		At& operator-=(const struct At_Ins& ins) {
+			this->delInstruction(ins);
+			return *this;
+		}
+		At& operator-=(const At& at) {
+			for (const struct At_Ins& item : at._atInsSet)
+			{
+				this->delInstruction(item);
+			}
+			return *this;
+		}
 
 	private:
 		std::list<struct At_Ins> _atInsSet;

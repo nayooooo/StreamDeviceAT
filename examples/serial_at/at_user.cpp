@@ -98,16 +98,27 @@ At_Err_t _at_user_del_AT_Reboot(At_Param_t param)
 
 At_Err_t at_user_init(void)
 {
-    at.addInstruction({ "AT", AT_TYPE_CMD, at_user_AT });
-    at.addInstruction({ "AT+ECHO", AT_TYPE_CMD, at_user_AT_Echo });
-    at.addInstruction({ "AT+LS", AT_TYPE_CMD, at_user_AT_List });
-    at.addInstruction({ "AT+REBOOT", AT_TYPE_CMD, at_user_AT_Reboot });
-    at.addInstruction({ "AT+LED", AT_TYPE_CMD, at_user_led });
-    at.addInstruction({ "AT+ADDREBOOT", AT_TYPE_CMD, _at_user_add_AT_Reboot });
-    at.addInstruction({ "AT+DELREBOOT", AT_TYPE_CMD, _at_user_del_AT_Reboot });
+    // at.addInstruction({ "AT", AT_TYPE_CMD, at_user_AT });
+    // at.addInstruction({ "AT+ECHO", AT_TYPE_CMD, at_user_AT_Echo });
+    // at.addInstruction({ "AT+LS", AT_TYPE_CMD, at_user_AT_List });
+    // at.addInstruction({ "AT+REBOOT", AT_TYPE_CMD, at_user_AT_Reboot });
+    // at.addInstruction({ "AT+LED", AT_TYPE_CMD, at_user_led });
+    // at.addInstruction({ "AT+ADDREBOOT", AT_TYPE_CMD, _at_user_add_AT_Reboot });
+    // at.addInstruction({ "AT+DELREBOOT", AT_TYPE_CMD, _at_user_del_AT_Reboot });
 
-    _at_led.addInstruction({ "on", AT_TYPE_CMD, _at_user_led_on });
-    _at_led.addInstruction({ "off", AT_TYPE_CMD, _at_user_led_off });
+    // _at_led.addInstruction({ "on", AT_TYPE_CMD, _at_user_led_on });
+    // _at_led.addInstruction({ "off", AT_TYPE_CMD, _at_user_led_off });
+
+    at += { "AT", AT_TYPE_CMD, at_user_AT };
+    at += { "AT+ECHO", AT_TYPE_CMD, at_user_AT_Echo };
+    at += { "AT+LS", AT_TYPE_CMD, at_user_AT_List };
+    at += { "AT+REBOOT", AT_TYPE_CMD, at_user_AT_Reboot };
+    at += { "AT+LED", AT_TYPE_CMD, at_user_led };
+    at += { "AT+ADDREBOOT", AT_TYPE_CMD, _at_user_add_AT_Reboot };
+    at += { "AT+DELREBOOT", AT_TYPE_CMD, _at_user_del_AT_Reboot };
+
+    _at_led += { "on", AT_TYPE_CMD, _at_user_led_on };
+    _at_led += { "off", AT_TYPE_CMD, _at_user_led_off };
 
     return AT_EOK;
 }
