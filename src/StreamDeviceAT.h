@@ -13,7 +13,11 @@
 #include <list>
 #include <algorithm>
 
+#if defined(USE_STREAM_SELF)
 #include "Stream/Stream.h"
+#else
+#include <Arduino.h>
+#endif
 
 // 需要至少支持C++11
 #if __cplusplus < 201103L
@@ -65,7 +69,10 @@ namespace StreamDeviceAT{
 	};
 	typedef struct At_Ins* At_Ins_t;
 
+
+#if defined(USE_STREAM_SELF)
 	class Stream;
+#endif
 
 	class At
 	{
@@ -134,7 +141,7 @@ namespace StreamDeviceAT{
 		At_Err_t handle(std::string&& pendIns) const;
 		At_Err_t handleAuto(void);
 
-		size_t print(const std::string& message) const { return isOutputDevExists() ? (_output_dev->print(message)) : (0); }
+		size_t print(const std::string& message) const { return isOutputDevExists() ? (_output_dev->print(message.c_str())) : (0); }
 		size_t print(const char* message) const { return isOutputDevExists() ? print(std::string(message)) : (0); }
 
 		size_t println(const std::string& message) const { return print(message + "\n"); }
@@ -147,7 +154,7 @@ namespace StreamDeviceAT{
 
 		At_Err_t sendInfor(const std::string& infor) const {
 			if (isOutputDevExists()) {
-				_output_dev->print(std::string("AT+{") + infor + "}");
+				_output_dev->print((std::string("AT+{") + infor + "}").c_str());
 				return AT_EOK;
 			} else return AT_ERROR_OUTPUT;
 		}

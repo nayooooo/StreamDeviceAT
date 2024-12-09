@@ -8,6 +8,8 @@
 
 #include "at_user.h"
 
+using namespace StreamDeviceAT;
+
 void setup() {
     at_user_init(115200UL);
 }
