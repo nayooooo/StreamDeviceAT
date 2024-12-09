@@ -9,26 +9,26 @@ namespace StreamDeviceAT{
     {
     public:
 
-        HardwareSerial() {}
+        HardwareSerial():_rx_buff(""), _tx_buff("") {}
         
         ~HardwareSerial() {}
 
     public:
 
-        int available(void) override
-        {
-            return 0;
-        }
+        void begin(unsigned long baud);
+        void end(void);
 
-        int read(void) override
-        {
-            return -1;
-        }
+        int available(void) override;
+        int read(void) override;
+        size_t write(uint8_t c) override { return write(&c, 1); }
+        size_t write(const uint8_t *buffer, size_t size);
 
-        size_t print(const std::string&) override
-        {
-            return 0;
-        }
+        size_t print(const std::string& s) override { return write(reinterpret_cast<const uint8_t*>(s.c_str()), s.length()); }
+
+    private:
+
+        std::string _rx_buff;
+        std::string _tx_buff;
     };
 
 }
