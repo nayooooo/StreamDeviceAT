@@ -1,9 +1,9 @@
 #ifndef __HARDWARESERIAL_H__
 #define __HARDWARESERIAL_H__
 
-#include "../../Stream/Stream.h"
+#if 0
 
-#include <Arduino.h>
+#include "../Stream/Stream.h"
 
 namespace StreamDeviceAT{
 
@@ -11,7 +11,7 @@ namespace StreamDeviceAT{
     {
     public:
 
-        HardwareSerial(): _uart_nr(UART0), _rx_size(256), _tx_buff("") {}
+        HardwareSerial():_rx_buff(""), _tx_buff("") {}
         
         ~HardwareSerial() {}
 
@@ -29,13 +29,12 @@ namespace StreamDeviceAT{
 
     private:
 
-        int _uart_nr;
-        uart_t* _uart = nullptr;
-        size_t _rx_size;
-
+        std::string _rx_buff;
         std::string _tx_buff;
     };
 
 }
+
+#endif
 
 #endif  // !__HARDWARESERIAL_H__

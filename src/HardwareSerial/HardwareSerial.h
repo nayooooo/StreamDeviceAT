@@ -1,6 +1,8 @@
 #ifndef __HARDWARESERIAL_H__
 #define __HARDWARESERIAL_H__
 
+#if 0
+
 #include "../Stream/Stream.h"
 
 namespace StreamDeviceAT{
@@ -32,5 +34,7 @@ namespace StreamDeviceAT{
     };
 
 }
+
+#endif
 
 #endif  // !__HARDWARESERIAL_H__
