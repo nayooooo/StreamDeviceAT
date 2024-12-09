@@ -9,8 +9,7 @@
 #include "at_user.h"
 
 void setup() {
-    Serial.begin(115200UL);
-    at_user_init();
+    at_user_init(115200UL);
 }
 
 void loop() {

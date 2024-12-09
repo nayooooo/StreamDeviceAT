@@ -7,10 +7,13 @@
 #ifndef __STREAMDEVICEAT_H__
 #define __STREAMDEVICEAT_H__
 
-#include <Arduino.h>
-
+#include <cstring>
+#include <string>
 #include <vector>
 #include <list>
+#include <algorithm>
+
+#include "Stream/Stream.h"
 
 // 需要至少支持C++11
 #if __cplusplus < 201103L
@@ -45,9 +48,9 @@ namespace StreamDeviceAT{
 	#define AT_TERMINATOR_DEFAULT "\n"
 	struct At_Param
 	{
-		String cmd;
+		std::string cmd;
 		int argc;
-		std::vector<String> argv;
+		std::vector<std::string> argv;
 	};
 	typedef struct At_Param* At_Param_t;
 
@@ -56,39 +59,41 @@ namespace StreamDeviceAT{
 	typedef At_Err_t (*At_Act_t)(At_Param_t param);
 	struct At_Ins
 	{
-		String atLable;
+		std::string atLable;
 		At_Type_t type;
 		At_Act_t act;
 	};
 	typedef struct At_Ins* At_Ins_t;
+
+	class Stream;
 
 	class At
 	{
 	public:
 		At(
 			Stream* input_dev, Stream* output_dev,
-			size_t param_max_num = AT_PARAM_MAX_NUM_DEFAULT, String terminator = AT_TERMINATOR_DEFAULT
+			size_t param_max_num = AT_PARAM_MAX_NUM_DEFAULT, std::string terminator = AT_TERMINATOR_DEFAULT
 		):
 		_input_dev(input_dev), _output_dev(output_dev), _param_max_num(param_max_num), _terminator(terminator), _readString("")
 		{
-			if (this->_param_max_num <= 0) {
+			if (_param_max_num <= 0) {
 				_param_max_num = 1;
 			}
 		}
 
 		At(
 			Stream* input_dev, Stream& output_dev,
-			size_t param_max_num = AT_PARAM_MAX_NUM_DEFAULT, String terminator = AT_TERMINATOR_DEFAULT
+			size_t param_max_num = AT_PARAM_MAX_NUM_DEFAULT, std::string terminator = AT_TERMINATOR_DEFAULT
 		): At(input_dev, &output_dev, param_max_num, terminator) {}
 
 		At(
 			Stream& input_dev, Stream* output_dev,
-			size_t param_max_num = AT_PARAM_MAX_NUM_DEFAULT, String terminator = AT_TERMINATOR_DEFAULT
+			size_t param_max_num = AT_PARAM_MAX_NUM_DEFAULT, std::string terminator = AT_TERMINATOR_DEFAULT
 		): At(&input_dev, output_dev, param_max_num, terminator) {}
 
 		At(
 			Stream& input_dev, Stream& output_dev,
-			size_t param_max_num = AT_PARAM_MAX_NUM_DEFAULT, String terminator = AT_TERMINATOR_DEFAULT
+			size_t param_max_num = AT_PARAM_MAX_NUM_DEFAULT, std::string terminator = AT_TERMINATOR_DEFAULT
 		): At(&input_dev, &output_dev, param_max_num, terminator) {}
 
 		// deep copy
@@ -100,94 +105,94 @@ namespace StreamDeviceAT{
 
 		~At()
 		{
-			this->_atInsSet.clear();
+			_atInsSet.clear();
 		}
 
 	private:
-		bool isInputDevExists(void) const { return (this->_input_dev != nullptr) ? true: false; }
-		bool isOutputDevExists(void) const { return (this->_output_dev != nullptr) ? true: false; }
+		bool isInputDevExists(void) const { return (_input_dev != nullptr) ? true: false; }
+		bool isOutputDevExists(void) const { return (_output_dev != nullptr) ? true: false; }
 
-		At_Err_t cutString(struct At_Param& param, String&& pendIns) const;
-		At_Ins_t checkString(struct At_Param& param, String&& pendIns) const;
+		At_Err_t cutString(struct At_Param& param, std::string&& pendIns) const;
+		At_Ins_t checkString(struct At_Param& param, std::string&& pendIns) const;
 
 	public:
-		size_t getParamMaxNum(void) const { return this->_param_max_num; }
+		size_t getParamMaxNum(void) const { return _param_max_num; }
 
-		At_Err_t setInputDevice(Stream* input_dev) { this->_input_dev = input_dev; return AT_EOK; }
-		At_Err_t setInputDevice(Stream& input_dev) { return this->setInputDevice(&input_dev); }
-		At_Err_t setOutputDevice(Stream* output_dev) { this->_output_dev = output_dev; return AT_EOK; }
-		At_Err_t setOutputDevice(Stream& output_dev) { return this->setOutputDevice(&output_dev); }
+		At_Err_t setInputDevice(Stream* input_dev) { _input_dev = input_dev; return AT_EOK; }
+		At_Err_t setInputDevice(Stream& input_dev) { return setInputDevice(&input_dev); }
+		At_Err_t setOutputDevice(Stream* output_dev) { _output_dev = output_dev; return AT_EOK; }
+		At_Err_t setOutputDevice(Stream& output_dev) { return setOutputDevice(&output_dev); }
 
-		At_Err_t addInstruction(const struct At_Ins& ins) { return this->addInstruction(At_Ins(ins)); }
+		At_Err_t addInstruction(const struct At_Ins& ins) { return addInstruction(At_Ins(ins)); }
 		At_Err_t addInstruction(struct At_Ins&& ins);
-		At_Err_t delInstruction(const String& atLable);
-		At_Err_t delInstruction(const struct At_Ins& ins) { return this->delInstruction(ins.atLable); };
+		At_Err_t delInstruction(const std::string& atLable);
+		At_Err_t delInstruction(const struct At_Ins& ins) { return delInstruction(ins.atLable); };
 
 		const char* error2String(At_Err_t error) const;
 
-		At_Err_t handle(const String& pendIns) const { return this->handle(String(pendIns)); }
-		At_Err_t handle(String&& pendIns) const;
+		At_Err_t handle(const std::string& pendIns) const { return handle(std::string(pendIns)); }
+		At_Err_t handle(std::string&& pendIns) const;
 		At_Err_t handleAuto(void);
 
-		size_t print(const String& message) const { return (this->isOutputDevExists()) ? (this->_output_dev->print(message)) : (0); }
-		size_t print(const char* message) const { return (this->isOutputDevExists()) ? this->print(String(message)) : (0); }
+		size_t print(const std::string& message) const { return isOutputDevExists() ? (_output_dev->print(message)) : (0); }
+		size_t print(const char* message) const { return isOutputDevExists() ? print(std::string(message)) : (0); }
 
-		size_t println(const String& message) const { return this->print(message + "\n"); }
-		size_t println(const char* message = "") const { return this->println(String(message)); }
+		size_t println(const std::string& message) const { return print(message + "\n"); }
+		size_t println(const char* message = "") const { return println(std::string(message)); }
 
 		size_t printf(const char* format, ...) const  __attribute__ ((format (printf, 2, 3)));
 
-		At_Err_t printSet(const String& name) const;
-		At_Err_t printSet(const char* name = "") const { return this->printSet(String(name)); }
+		At_Err_t printSet(const std::string& name) const;
+		At_Err_t printSet(const char* name = "") const { return printSet(std::string(name)); }
 
-		At_Err_t sendInfor(const String& infor) const {
-			if (this->isOutputDevExists()) {
-				this->_output_dev->print(String("AT+{") + infor + "}");
+		At_Err_t sendInfor(const std::string& infor) const {
+			if (isOutputDevExists()) {
+				_output_dev->print(std::string("AT+{") + infor + "}");
 				return AT_EOK;
 			} else return AT_ERROR_OUTPUT;
 		}
-		At_Err_t sendInfor(const char* infor = "") const { return this->sendInfor(String(infor)); }
+		At_Err_t sendInfor(const char* infor = "") const { return sendInfor(std::string(infor)); }
 
 	public:
 		At& operator+=(const struct At_Ins& ins) {
-			this->addInstruction(ins);
+			addInstruction(ins);
 			return *this;
 		}
 		At& operator+=(struct At_Ins&& ins) {
-			this->addInstruction(std::move(ins));
+			addInstruction(std::move(ins));
 			return *this;
 		}
 		At& operator+=(const At& at) {
 			for (const struct At_Ins& item : at._atInsSet)
 			{
-				this->addInstruction(item);
+				addInstruction(item);
 			}
 			return *this;
 		}
 
-		At& operator-=(const String& atLable) {
-			this->delInstruction(atLable);
+		At& operator-=(const std::string& atLable) {
+			delInstruction(atLable);
 			return *this;
 		}
 		At& operator-=(const struct At_Ins& ins) {
-			this->delInstruction(ins);
+			delInstruction(ins);
 			return *this;
 		}
 		At& operator-=(const At& at) {
 			for (const struct At_Ins& item : at._atInsSet)
 			{
-				this->delInstruction(item);
+				delInstruction(item);
 			}
 			return *this;
 		}
 
 	private:
 		std::list<struct At_Ins> _atInsSet;
-		Stream* _input_dev;
-		Stream* _output_dev;
+		Stream* _input_dev = nullptr;
+		Stream* _output_dev = nullptr;
 		size_t _param_max_num;
-		String _terminator;  // only use in At::handleAuto
-		String _readString;
+		std::string _terminator;  // only use in At::handleAuto
+		std::string _readString;
 	};
 
 }

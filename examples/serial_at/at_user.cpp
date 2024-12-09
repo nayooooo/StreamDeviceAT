@@ -1,7 +1,11 @@
 #include "at_user.h"
 
-At at(Serial, Serial, 10);
-static At _at_led(Serial, Serial);
+#include "HardwareSerial/esp8266/HardwareSerial.h"
+using namespace StreamDeviceAT;
+static HardwareSerial MySerial;
+
+At at(MySerial, MySerial, 10);
+static At _at_led(MySerial, MySerial);
 
 At_Err_t at_user_AT(At_Param_t param)
 {
@@ -43,7 +47,7 @@ At_Err_t at_user_AT_Reboot(At_Param_t param)
 At_Err_t at_user_led(At_Param_t param)
 {
     At_Err_t err;
-    String str = "";
+    std::string str = "";
 
     // if ((param->argc < 1) || (param->argc > 2)) {
     if (param->argc != 1) {
@@ -51,7 +55,7 @@ At_Err_t at_user_led(At_Param_t param)
     }
     
     for (size_t i = 0; i < param->argc; i++) {
-        str += String(param->argv[i]) + " ";
+        str += std::string(param->argv[i]) + " ";
     }
     err = _at_led.handle(str);
     if (err != AT_EOK) goto err_out;
@@ -60,7 +64,7 @@ At_Err_t at_user_led(At_Param_t param)
     if (0) {
     err_out:
         _at_led.printSet(param->cmd);
-        at.sendInfor(String("commond(") + param->cmd + ")'s param is error");
+        at.sendInfor(std::string("commond(") + param->cmd + ")'s param is error");
         return AT_ERROR;
     }
 }
@@ -96,8 +100,10 @@ At_Err_t _at_user_del_AT_Reboot(At_Param_t param)
     return err;
 }
 
-At_Err_t at_user_init(void)
+At_Err_t at_user_init(unsigned long baud)
 {
+    MySerial.begin(baud);
+
     // at.addInstruction({ "AT", AT_TYPE_CMD, at_user_AT });
     // at.addInstruction({ "AT+ECHO", AT_TYPE_CMD, at_user_AT_Echo });
     // at.addInstruction({ "AT+LS", AT_TYPE_CMD, at_user_AT_List });

@@ -2,14 +2,14 @@
 
 using namespace StreamDeviceAT;
 
-At_Err_t At::cutString(struct At_Param& param, String&& pendIns) const
+At_Err_t At::cutString(struct At_Param& param, std::string&& pendIns) const
 {
-	if (pendIns.isEmpty()) return AT_ERROR;  // do not accept empty string
+	if (pendIns.empty()) return AT_ERROR;  // do not accept empty string
 	// TODO: If necessary, modify to create a copy of the character array,
 	//       as this function will modify the resulting character array
 	char* str = (char*)(pendIns.c_str());
 
-	size_t param_num = this->getParamMaxNum();
+	size_t param_num = getParamMaxNum();
 
 	param.cmd = "";
 	param.argc = 0;
@@ -17,12 +17,12 @@ At_Err_t At::cutString(struct At_Param& param, String&& pendIns) const
 
 	// find at set
 	param.cmd = strtok(str, " \r\n");
-	if (param.cmd.isEmpty()) return AT_ERROR;
+	if (param.cmd.empty()) return AT_ERROR;
 	// find at param
 	for (int i = 0; i < param_num; i++)
 	{
-		String temp = strtok(NULL, " \r\n");
-		if (temp.isEmpty())
+		std::string temp = strtok(NULL, " \r\n");
+		if (temp.empty())
 			break;
 		param.argv.push_back(temp);
 		param.argc++;
@@ -31,18 +31,18 @@ At_Err_t At::cutString(struct At_Param& param, String&& pendIns) const
 	return AT_EOK;
 }
 
-At_Ins_t At::checkString(struct At_Param& param, String&& pendIns) const
+At_Ins_t At::checkString(struct At_Param& param, std::string&& pendIns) const
 {
 	At_Ins_t target = nullptr;
 
-	At_Err_t err = this->cutString(param, std::move(pendIns));
+	At_Err_t err = cutString(param, std::move(pendIns));
 	if (err != AT_EOK) return nullptr;
 
-	std::list<struct At_Ins>::const_iterator it = std::find_if(this->_atInsSet.begin(), this->_atInsSet.end(),
+	std::list<struct At_Ins>::const_iterator it = std::find_if(_atInsSet.begin(), _atInsSet.end(),
 															[param](const struct At_Ins& ins) -> bool {
 																return ins.atLable == param.cmd;
 															});
-	if (it == this->_atInsSet.end()) target = nullptr;
+	if (it == _atInsSet.end()) target = nullptr;
 	else {
 		struct At_Ins& temp = (struct At_Ins&)(*it);  // prevent optimization
 		target = &temp;
@@ -53,34 +53,34 @@ At_Ins_t At::checkString(struct At_Param& param, String&& pendIns) const
 
 At_Err_t At::addInstruction(struct At_Ins&& ins)
 {
-	if (ins.atLable.isEmpty()) return AT_ERROR;
+	if (ins.atLable.empty()) return AT_ERROR;
 	if (ins.type == AT_TYPE_NULL) return AT_ERROR;
 	if (ins.act == nullptr) return AT_ERROR_NO_ACT;
 
-	std::list<struct At_Ins>::iterator it = std::find_if(this->_atInsSet.begin(), this->_atInsSet.end(),
+	std::list<struct At_Ins>::iterator it = std::find_if(_atInsSet.begin(), _atInsSet.end(),
 															[ins](const struct At_Ins& insr) -> bool {
 																return insr.atLable == ins.atLable;
 															});
-	if (it != this->_atInsSet.end()) return AT_ERROR_DUPLICATE_LABEL;
+	if (it != _atInsSet.end()) return AT_ERROR_DUPLICATE_LABEL;
 
-	this->_atInsSet.push_back(std::move(ins));
+	_atInsSet.push_back(std::move(ins));
 
 	return AT_EOK;
 }
 
-At_Err_t At::delInstruction(const String& atLable)
+At_Err_t At::delInstruction(const std::string& atLable)
 {
-	if (atLable.isEmpty()) return AT_ERROR;
+	if (atLable.empty()) return AT_ERROR;
 
 	std::list<struct At_Ins>::iterator it;
-	it = std::find_if(this->_atInsSet.begin(), this->_atInsSet.end(),
+	it = std::find_if(_atInsSet.begin(), _atInsSet.end(),
 						[atLable](const struct At_Ins& ins) -> bool {
 							return ins.atLable == atLable;
 						});
-	if (it == this->_atInsSet.end()) return AT_ERROR_NOT_FIND;
+	if (it == _atInsSet.end()) return AT_ERROR_NOT_FIND;
 
 	// erase one
-	this->_atInsSet.erase(it);
+	_atInsSet.erase(it);
 
 	return AT_EOK;
 }
@@ -107,11 +107,11 @@ const char* At::error2String(At_Err_t error) const
 	return "AT no error";
 }
 
-At_Err_t At::handle(String&& pendIns) const
+At_Err_t At::handle(std::string&& pendIns) const
 {
 	At_Err_t ret;
 	struct At_Param param;
-	At_Ins_t target = this->checkString(param, std::move(pendIns));
+	At_Ins_t target = checkString(param, std::move(pendIns));
 
 	if (target == nullptr) {
 		ret = AT_ERROR_NOT_FIND;
@@ -134,15 +134,15 @@ At_Err_t At::handleAuto(void)
 	int in = 0;
 
 	if (!isInputDevExists()) return AT_ERROR_INPUT;
-
-	if (this->_input_dev->available()) {
-		in = this->_input_dev->read();
+	
+	if (_input_dev->available()) {
+		in = _input_dev->read();
 		if (in < 0) return AT_ERROR_INPUT;
-		this->_readString += (char)in;
-		if (this->_readString.endsWith(this->_terminator)) {
-			this->_readString.remove(this->_readString.length() - this->_terminator.length(), this->_terminator.length());
-			At_Err_t err = this->handle(std::move(this->_readString));
-			this->_readString.clear();
+		_readString += (char)in;
+		if (_readString.rfind(_terminator) == _readString.length() - _terminator.length()) {
+			_readString.resize(_readString.length() - _terminator.length());
+			At_Err_t err = handle(std::move(_readString));
+			_readString.clear();
 			return err;
 		}
 	}
@@ -166,7 +166,7 @@ size_t At::printf(const char* format, ...) const
         vsnprintf(buffer, len + 1, format, arg);
         va_end(arg);
 	}
-	this->print(buffer);
+	print(buffer);
     if (buffer != temp) {
         delete[] buffer;
     }
@@ -174,15 +174,15 @@ size_t At::printf(const char* format, ...) const
 	return len;
 }
 
-At_Err_t At::printSet(const String& name) const
+At_Err_t At::printSet(const std::string& name) const
 {
-	this->println();
-	this->println(String("the set(") + name + "): ");
-	if (this->_atInsSet.size() == 0) {
-		this->println("have nothing AT commond!");
+	println();
+	println(std::string("the set(") + name + "): ");
+	if (_atInsSet.size() == 0) {
+		println("have nothing AT commond!");
 	} else {
-		for (struct At_Ins ins : this->_atInsSet) {
-			this->println(String("--") + ins.atLable);
+		for (struct At_Ins ins : _atInsSet) {
+			println(std::string("--") + ins.atLable);
 		}
 	}
 	return AT_EOK;
