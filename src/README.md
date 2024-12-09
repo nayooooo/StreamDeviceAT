@@ -37,3 +37,10 @@
 4. 将`At::_terminator`的类型换成`String`，用于应对多字节结束标识的指令模式，增强稳定性
 5. 重载了运算符`+=`和`-=`，用于增删指令条目
 6. 添加`At`的深拷贝构造函数，方便复用指令条目
+
+## V2-StdStringAndStdIOStream
+
+TODO:
+
+1. 使用`std::string`替换`String`
+2. 添加自定义抽象类`Stream`和硬件串口类`HardwareSerial`，从而脱离固定平台
